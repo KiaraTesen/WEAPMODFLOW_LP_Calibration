@@ -51,6 +51,8 @@ This repository contains files that allow us to calibrate the MODFLOW model, spe
 * Máscara por zona de PH
 
 ### Operar WEAP - MODFLOW
+La calibración se hará por zonas según geología superficial, los valores iniciales serán los presentados en la Tabla 3-3 (DGA, 2019).
+
 1. Generar shapes de 0 y 1s donde se delimiten las zonas de las PH. 
 2. Ver como cambiar los valores de conductancia en el río y celdas DRN. También necesitarían shapes de 0 y 1s para no extender la zona.
 3. Las variables que forman parte de E:
