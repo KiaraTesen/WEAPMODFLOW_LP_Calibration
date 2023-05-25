@@ -27,7 +27,7 @@ This repository contains files that allow us to calibrate the MODFLOW model, spe
       * Conductancia de elementros DRN (Cd) 
       * Supuesto: No hay variación de los parámentros en el tiempo. Limitación del programa.
     * Definir la función objetivo --> Encontrar el set de parámetros óptimos que reduzca el error entre los valores observados y simulados
-        f(K, Sy, Cr, Cd) --> min{Recarga distribuida, Recarga desde río, Afloramiento, Pozos de observación, Caudales, Recarga lateral (¿?)}
+        f(K, Sy, Cr, Cd) --> minE{Recarga distribuida, Recarga desde río, Afloramiento, Pozos de observación, Caudales, Recarga lateral (¿?)}
         Subject to:
             Rango de variables por zonas
             Celdas con crecimientos o caídas abruptas.
@@ -63,4 +63,15 @@ La calibración se hará por zonas según geología superficial, los valores ini
     
 ### Study area (Podría ir después de explicar Convolución)
 * Características semi áridas de las cuencas.
-¿Ver en papers que toman casos reales como hacen la comparación de los valores de los PH? - Puede ser si caen dentro del rango de valores,...
+¿Ver en papers que toman casos reales como hacen la comparación de los valores de los PH? - Puede ser si caen dentro del rango de valores de la calibración de la DGA, 2019.
+
+### DUDAS!!
+* ¿Cómo se haría la comparación de pozos observados vs simulados, si las fechas de simulación no son las mmismas? ¿Es valido completar los datos de manera lineal?
+
+### Falta hacer en el modelo:
+* Agregar streamflow gauges.
+* Sacar SHAPES por zonas geológicas rectangulares.
+* Cómo unir matriz final después de operación
+
+* Decidir si los valores a acercarnos son los de la DGA. (LEER BIEN SI SUS VALORES SON ACEPTABLES. AUNQUE LA DGA HA COMENTADO QUE LA CALIBRACION LES PARECE BIEN)
+* Cuánto demora el modelo en ejecutarse para el periodo de 1980 - 2020. Probar en máquinas de 2, 3 o 4 GB RAM.
