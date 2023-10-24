@@ -1,0 +1,14 @@
+# Name File for MODFLOW created on 10/23/2023 by ModelMuse Version 5.1.1.0
+LIST             11 ..\..\output\output.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.lst REPLACE
+DATA(BINARY)      9 ..\..\output\output.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.cbc REPLACE
+DIS              12 ..\..\model\model.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.dis OLD
+BAS6             13 ..\..\model\model.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.bas OLD
+OC               39 ..\..\model\model.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.oc OLD
+DATA             37 ..\..\output\output.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.fhd REPLACE
+DATA             38 ..\..\output\output.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.fdn REPLACE
+NWT             133 ..\..\model\model.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.nwt OLD
+UPW             134 ..\..\model\model.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.upw OLD
+CHD              17 ..\..\model\model.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.chd OLD
+RIV              21 ..\..\model\model.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.riv OLD
+DRN              22 ..\..\model\model.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.drn OLD
+RCH              24 ..\..\model\model.con_dren_sin_aisladas_NWT\con_dren_sin_aisladas_NWT.rch OLD
