@@ -30,8 +30,9 @@ def get_sampling_LH(n_var, n, l_bounds, u_bounds):
     sample = engine.random(n=n)
     sample_scaled = scale(sample, l_bounds, u_bounds)
     return np.around(sample_scaled, 4)
-
+"""
 #---    Modification 1 of HP
+
 def get_pre_HP(Shape_HP, new_Shape, variable, particle, begin, end):
     count = 0
     x = particle[begin : end]
@@ -58,7 +59,9 @@ def get_pre_HP(Shape_HP, new_Shape, variable, particle, begin, end):
     matriz = np.zeros((rows,columns))
     for i in range(0,len(new_Shape['ROW'])):
         matriz[new_Shape['ROW'][i]-1][new_Shape['COLUMN'][i]-1] = new_Shape[variable][i] 
+    print(matriz)
     return matriz
+"""
 
 #---    Modification 2 of HP
 def get_HP(Shape_HP, variable, active_matriz, decimals, kernel):
@@ -126,6 +129,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     new_shape_HP = initial_shape_HP.copy()
 
     for m in HP:
+        """
         if m == "kx":
             begin = 0
             end = active_cells
@@ -135,7 +139,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
         globals()["matriz_pre_" + str(m)] = get_pre_HP(initial_shape_HP, pre_shape_HP, str(m), sample_scaled, begin, end)
         get_image_matriz(globals()["matriz_pre_" + str(m)], str(m), os.path.join(dir_iteration, 'Pre_' + str(m) +'.png'))
         plt.clf
-
+        """
         # CONVOLUTIONAL LAYERS
         decimals_kx = 4
         decimals_sy = 4
@@ -166,7 +170,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     new_shape_HP['kz'] = matriz_kz.flatten()
     new_shape_HP['ss'] = matriz_ss.flatten()
     new_shape_HP.to_file(os.path.join(dir_iteration, 'Elements_iter_' + str(iteration) + '.shp'))
-
+    
     #---    Generate new native files
     model = fpm.Modflow.load(path_init_model + '/SyntheticAquifer_NY.nam', version = 'mfnwt', exe_name = path_nwt_exe)
     model.write_input()
@@ -199,13 +203,13 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     WEAP = win32.Dispatch("WEAP.WEAPApplication")
     WEAP.ActiveArea = "SyntheticProblem_WEAPMODFLOW"
     WEAP.Calculate()
-
+    
     #---    Export results
     favorites = pd.read_excel(r"C:\Users\vagrant\Documents\MODFLOW_Calibration\data\Favorites_WEAP.xlsx")
     for i,j in zip(favorites["BranchVariable"],favorites["WEAP Export"]):
         WEAP.LoadFavorite(i)
         WEAP.ExportResults(os.path.join(dir_iteration, f"iter_{str(iteration)}_{j}.csv"), True, True, True, False, False)
-
+    """
     #---------------------------------
     #---    Objective Function    ----
     #---------------------------------
@@ -257,3 +261,4 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
 
     of = g_srmse_well + g2*rmse_q + g3*(P_kx + P_sy)
     return of
+    """

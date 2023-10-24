@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #---    Packages
-from Functions_DPSO_SCL_CCL import *
+from Functions_ADPSO_CL import *
 import geopandas as gpd
 import pandas as pd
 import numpy as np
@@ -11,7 +11,7 @@ import os
 from functools import reduce
 import time
 import sys
-from request_server.request_server import send_request_py
+#from request_server.request_server import send_request_py
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -23,25 +23,26 @@ FINAL_ITERATION = int(sys.argv[4])
 VM = int(sys.argv[5])
 
 #---    Paths
-path_WEAP = r'C:\Users\vagrant\Documents\WEAP Areas\SyntheticProblem_WEAPMODFLOW'
-path_model = os.path.join(path_WEAP, 'MODFLOW_model')
-path_init_model = r'C:\Users\vagrant\Documents\MODFLOW_Calibration\data\MODFLOW_model\MODFLOW_model_vinit'
-path_nwt_exe = r'C:\Users\vagrant\Documents\MODFLOW_Calibration\data\MODFLOW-NWT_1.2.0\bin\MODFLOW-NWT_64.exe'
-path_GIS = r'C:\Users\vagrant\Documents\MODFLOW_Calibration\data\GIS'    
-path_output = r'C:\Users\vagrant\Documents\MODFLOW_Calibration\MODFLOW_NewModel_DPSO\output'         # Need full path for WEAP Export
-path_obs_data = r'C:\Users\vagrant\Documents\MODFLOW_Calibration\data\ObservedData'
+# TEMPORAL PATHS
+path_WEAP = r'C:\Users\aimee\Documents\WEAP Areas\Ligua_Petorca_WEAP_MODFLOW_RDM'
+path_model = os.path.join(path_WEAP, 'NWT_v24')
+path_init_model = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_initial'
+path_nwt_exe = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\MODFLOW-NWT_1.2.0\bin\MODFLOW-NWT_64.exe'
+path_GIS = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\GIS'
+path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
+path_obs_data = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\ObservedData'
 
 #---    Initial matriz
 HP = ['kx', 'sy'] 
-initial_shape_HP = gpd.read_file(path_GIS + '/Elements_initial_unique_value_v2.shp')   # /Elements_initial_unique_value.shp, /Elements_initial_zones_reduced.shp
-active_matriz = initial_shape_HP['Active'].to_numpy().reshape((84,185))             # Matrix of zeros and ones that allows maintaining active area
+initial_shape_HP = gpd.read_file(path_GIS + '/SuperfitialGeology_initial_values.shp')
+active_matriz = initial_shape_HP['ACTIVEL1'].to_numpy().reshape((263,371))             # Matrix of zeros and ones that allows maintaining active area
 
-active_cells = 7536
+active_cells = 18948
 
 k_shape_1 = (5,5)   #HK_1
 k_shape_2 = (3,3)   #SY_1
 k_shape_3 = (3,3)   #HK_2
-k_shape_4 = (2,2)   #SY_2
+k_shape_4 = (3,3)   #SY_2
 
 n_var = active_cells * 2
 for k in range(1,5):
@@ -51,13 +52,13 @@ n_var = n_var    # Number of variables
 print (n_var)
 
 #---    Bounds
-lb_kx, ub_kx = 0.015, 3.8
-lb_sy, ub_sy = 0.278, 3.57
+lb_kx, ub_kx = 3.25, 5
+lb_sy, ub_sy = 1.175, 1.2
 
-lb_1_kx, ub_1_kx = 0.001, 0.1
-lb_1_sy, ub_1_sy = 0.365, 0.45
-lb_2_kx, ub_2_kx = 0.002, 0.3
-lb_2_sy, ub_2_sy = 0.125, 0.15
+lb_1_kx, ub_1_kx = 0.075, 1.0
+lb_1_sy, ub_1_sy = 0.1375, 0.14
+lb_2_kx, ub_2_kx = 0.075, 0.50
+lb_2_sy, ub_2_sy = 0.15, 0.1525	
 
 l_bounds = np.concatenate((np.around(np.repeat(lb_kx, active_cells),4), np.around(np.repeat(lb_sy, active_cells),4), 
                            np.around(np.repeat(lb_1_kx, n_var_1),4), np.around(np.repeat(lb_1_sy, n_var_2),4), 
@@ -75,22 +76,23 @@ class Particle:
         self.x_best = np.copy(x)                 
         self.y_best = y
 
-pob = Particle(np.around(np.array([0]*(n_var)),4),np.around(np.array([0]*(n_var)),4),10000000000)
+pob = Particle(np.around(np.array([0]*(n_var)),5),np.around(np.array([0]*(n_var)),5),10000000000)
 
 if ITERATION == 0:
-    with h5py.File('Pre_DPSO_historial.h5', 'r') as f:
-        pob.x = np.copy(f["pob_x"][VM-2])
+    with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
+        pob.x = np.copy(f["pob_x"][0])                   # pob.x = np.copy(f["pob_x"][VM-2])
     f.close()
 
     #---    Initial Sampling - Pob(0)
     y_init = Run_WEAP_MODFLOW(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var_3, n_var, 
                               k_shape_1, k_shape_2, k_shape_3, k_shape_4, active_matriz, path_init_model, path_model, path_nwt_exe, 
                               path_obs_data)
+    """                          
     pob.y = y_init
     pob.y_best = y_init
 
     #---    Create iteration register file
-    with h5py.File('DPSO_historial.h5', 'w') as f:
+    with h5py.File('ADPSO-CL_historial.h5', 'w') as f:
         iter_h5py = f.create_dataset("iteration", (FINAL_ITERATION, 1))
         pob_x_h5py = f.create_dataset("pob_x", (FINAL_ITERATION, n_var))
         pob_y_h5py = f.create_dataset("pob_y", (FINAL_ITERATION, 1))
@@ -183,3 +185,4 @@ else:
 
         f["w"][ITERATION] = w
     f.close()
+    """

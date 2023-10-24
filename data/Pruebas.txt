@@ -1,0 +1,106 @@
+Prueba 1:
+lb_1_kx, ub_1_kx = 0.00001, 19243
+lb_1_sy, ub_1_sy = 0.365, 0.45
+lb_2_kx, ub_2_kx = 0.00292, 0.8
+lb_2_sy, ub_2_sy = 0.125, 0.15
+
+Prueba 2:
+lb_1_kx, ub_1_kx = 0.00001, 1924		llega a 424910 - 0.1072
+lb_1_sy, ub_1_sy = 0.365, 0.45
+lb_2_kx, ub_2_kx = 0.00292, 0.4			llega a 1.0448 - 0.0136
+lb_2_sy, ub_2_sy = 0.125, 0.15
+
+Prueba 3:
+lb_1_kx, ub_1_kx = 0.00001, 192			llega a 18455 - 0.009
+lb_1_sy, ub_1_sy = 0.365, 0.45
+lb_2_kx, ub_2_kx = 0.00292, 0.2			llega a 1.1131 - 0.0325
+lb_2_sy, ub_2_sy = 0.125, 0.15
+
+Prueba 4:
+lb_1_kx, ub_1_kx = 0.00001, 19			llega a 1007.32 - 0.0007
+lb_1_sy, ub_1_sy = 0.10, 0.40
+lb_2_kx, ub_2_kx = 0.00292, 0.10		llega a 0.8317 - 0.0135
+lb_2_sy, ub_2_sy = 0.125, 0.25
+
+Prueba 5:
+lb_1_kx, ub_1_kx = 0.00005, 7			llega a 443 - 0.0002
+lb_1_sy, ub_1_sy = 0.10, 0.30
+lb_2_kx, ub_2_kx = 0.00292, 0.10		llega a 0.6932 - 0.0119
+lb_2_sy, ub_2_sy = 0.125, 0.25
+
+Prueba 6:
+lb_1_kx, ub_1_kx = 0.000075, 2			llega a 87.8662 - 0.000001728
+lb_1_sy, ub_1_sy = 0.10, 0.30
+lb_2_kx, ub_2_kx = 0.00292, 0.075		llega a 0.6098 - 0.01
+lb_2_sy, ub_2_sy = 0.125, 0.25
+
+Prueba 7:
+lb_1_kx, ub_1_kx = 0.000075, 2			llega a 118.5536 - 0.0001
+lb_1_sy, ub_1_sy = 0.10, 0.20			llega a 0.4743 - 0.0089
+lb_2_kx, ub_2_kx = 0.003, 0.10
+lb_2_sy, ub_2_sy = 0.125, 0.20
+
+Prueba 8:
+lb_1_kx, ub_1_kx = 0.0001, 2			llega 123.2335 - 0.0001
+lb_1_sy, ub_1_sy = 0.105, 0.195			llega 0.4554 - 0.0094
+lb_2_kx, ub_2_kx = 0.003, 0.10
+lb_2_sy, ub_2_sy = 0.135, 0.195
+
+Prueba 9:	
+lb_1_kx, ub_1_kx = 0.0005, 1.85			llega a 120.6981 - 0.0001
+lb_1_sy, ub_1_sy = 0.110, 0.1925		llega a 0.5007 - 0.0098
+lb_2_kx, ub_2_kx = 0.003, 0.10
+lb_2_sy, ub_2_sy = 0.1375, 0.1925
+
+Prueba 10:
+lb_1_kx, ub_1_kx = 0.001, 1.5			llega a 83.057 - 0.0001
+lb_1_sy, ub_1_sy = 0.115, 0.190			llega 0.4863 - 0.0092
+lb_2_kx, ub_2_kx = 0.003, 0.10
+lb_2_sy, ub_2_sy = 0.138, 0.190
+
+---- METODOLOGÍA COMPLETA
+Prueba 1:
+lb_kx, ub_kx = 0.001, 5.00			llega a 9.1806 - 1.728e-6
+lb_sy, ub_sy = 0.075, 5.00			llega a 0.5027 - 0.0061
+
+lb_1_kx, ub_1_kx = 0.005, 1.75
+lb_1_sy, ub_1_sy = 0.125, 0.175
+lb_2_kx, ub_2_kx = 0.005, 0.10
+lb_2_sy, ub_2_sy = 0.138, 0.175
+
+Prueba 2:
+lb_kx, ub_kx = 0.005, 7.00			llega a 38.8336- 0.001
+lb_sy, ub_sy = 0.100, 2.50			llega a 0.2569 - 0.0038
+
+lb_1_kx, ub_1_kx = 0.005, 3.00
+lb_1_sy, ub_1_sy = 0.125, 0.175
+lb_2_kx, ub_2_kx = 0.005, 0.50
+lb_2_sy, ub_2_sy = 0.138, 0.175
+
+Prueba 3:
+#---    Bounds
+lb_kx, ub_kx = 0.010, 9.00			llega a 104.3036 - 1.728e-6
+lb_sy, ub_sy = 0.250, 2.00			llega a 0.2573 - 0.0034
+
+lb_1_kx, ub_1_kx = 0.0075, 1.75
+lb_1_sy, ub_1_sy = 0.125, 0.175
+lb_2_kx, ub_2_kx = 0.005, 0.50
+lb_2_sy, ub_2_sy = 0.138, 0.175
+
+Prueba 4:
+lb_kx, ub_kx = 0.050, 8.00			llega a 89.7790 - 0.0001
+lb_sy, ub_sy = 0.500, 2.00			llega a 0.4535 - 0.0072
+
+lb_1_kx, ub_1_kx = 0.0075, 1.50
+lb_1_sy, ub_1_sy = 0.125, 0.175
+lb_2_kx, ub_2_kx = 0.005, 0.50
+lb_2_sy, ub_2_sy = 0.138, 0.175
+
+Prueba 5:
+lb_kx, ub_kx = 0.100, 8.00			llega a 58.8206 - 1.728e-6
+lb_sy, ub_sy = 0.750, 1.50			llega 0.3888 - 0.0076
+
+lb_1_kx, ub_1_kx = 0.0075, 1.50
+lb_1_sy, ub_1_sy = 0.125, 0.175
+lb_2_kx, ub_2_kx = 0.005, 0.50
+lb_2_sy, ub_2_sy = 0.138, 0.175

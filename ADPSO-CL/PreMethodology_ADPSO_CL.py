@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 #---    Packages
-from Functions_DPSO_SCL_CCL import *
+from Functions_ADPSO_CL import *
 import numpy as np
 import h5py
 import os
@@ -12,12 +12,12 @@ warnings.filterwarnings('ignore')
 #---    Initial matriz
 n = 35                                                 # Population size: 20 o 35
 
-active_cells = 7536
+active_cells = 18948
 
 k_shape_1 = (5,5)   #HK_1
 k_shape_2 = (3,3)   #SY_1
 k_shape_3 = (3,3)   #HK_2
-k_shape_4 = (2,2)   #SY_2
+k_shape_4 = (3,3)   #SY_2
 
 n_var = active_cells * 2
 for k in range(1,5):
@@ -27,17 +27,17 @@ n_var = n_var    # Number of variables
 print (n_var)
 
 #---    Create iteration register file
-with h5py.File('Pre_DPSO_historial.h5', 'w') as f:
+with h5py.File('Pre_ADPSO-CL.h5', 'w') as f:
     pob_x_h5py = f.create_dataset("pob_x", (n, n_var))
 
 #---    Bounds
-lb_kx, ub_kx = 0.015, 3.8
-lb_sy, ub_sy = 0.278, 3.57
+lb_kx, ub_kx = 3.25, 5
+lb_sy, ub_sy = 1.175, 1.2
 
-lb_1_kx, ub_1_kx = 0.001, 0.1
-lb_1_sy, ub_1_sy = 0.365, 0.45
-lb_2_kx, ub_2_kx = 0.002, 0.3
-lb_2_sy, ub_2_sy = 0.125, 0.15
+lb_1_kx, ub_1_kx = 0.075, 1.0
+lb_1_sy, ub_1_sy = 0.1375, 0.14
+lb_2_kx, ub_2_kx = 0.075, 0.50
+lb_2_sy, ub_2_sy = 0.15, 0.1525	
 
 l_bounds = np.concatenate((np.around(np.repeat(lb_kx, active_cells),4), np.around(np.repeat(lb_sy, active_cells),4), 
                            np.around(np.repeat(lb_1_kx, n_var_1),4), np.around(np.repeat(lb_1_sy, n_var_2),4), 
@@ -60,12 +60,12 @@ print(sample_scaled)
 
 #---    Iteration register
 for i in range(n):
-    with h5py.File('Pre_DPSO_historial.h5', 'a') as f:
+    with h5py.File('Pre_ADPSO-CL.h5', 'a') as f:
         f["pob_x"][i] = np.copy(sample_scaled[i])
     f.close()
 
 #---    Read file to verify
-with h5py.File('Pre_DPSO_historial.h5', 'r') as f:
+with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
     x = f["pob_x"][:]
 print(x[0])
 print(len(x))
