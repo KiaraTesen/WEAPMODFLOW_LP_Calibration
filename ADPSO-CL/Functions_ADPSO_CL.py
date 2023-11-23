@@ -9,6 +9,8 @@ import shutil
 import win32com.client as win32
 from sklearn.metrics import mean_squared_error
 import math
+from Complete_MODFLOW_Results import *
+from CriteriosSustentabilidad import *
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -79,14 +81,6 @@ def get_HP(Shape_HP, variable, active_matriz, decimals, kernel):
         new_matriz = np.where(new_matriz == 0, 0.000001728, new_matriz)
 
     return new_matriz
-
-#---    Order data
-def get_data(path,skr):
-    df_data = pd.read_csv(path, skiprows = skr)
-    df_data = df_data.set_index('Branch')
-    df_data = df_data.set_index(pd.to_datetime(df_data.index))
-    df_data = df_data.iloc[36:,:]
-    return df_data
 
 def get_eliminate_zeros(lista):
     position = 0
@@ -175,7 +169,10 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
 
     new_shape_HP.to_file(os.path.join(dir_iteration, 'Elements_iter_' + str(iteration) + '.shp'))
 
-    #---    Generate new native files
+    #----------------------------------------
+    #---    Generate new native files    ----
+    #----------------------------------------
+
     model = fpm.Modflow.load(path_init_model + '/con_dren_sin_aisladas_NWT.nam', version = 'mfnwt', exe_name = path_nwt_exe)
     model.write_input()
     model.remove_package("UPW")
@@ -207,10 +204,125 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     WEAP = win32.Dispatch("WEAP.WEAPApplication")
     WEAP.ActiveArea = "Ligua_Petorca_WEAP_MODFLOW_RDM"
     WEAP.Calculate()
-
-        #---    Export results
+    
+    #---    Export results
     favorites = pd.read_excel(r"C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\Favorites_WEAP.xlsx")
     #favorites = pd.read_excel(r"C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\Favorites_WEAP.xlsx")
     for i,j in zip(favorites["BranchVariable"],favorites["WEAP Export"]):
         WEAP.LoadFavorite(i)
         WEAP.ExportResults(os.path.join(dir_iteration, f"iter_{str(iteration)}_{j}.csv"), True, True, True, False, False)
+    
+    #------------------------------
+    #---    MODFLOW Balance    ----
+    #------------------------------
+    MODFLOW_Balance(dir_iteration, path_model, path_obs_data)
+    Processing_Balance(dir_iteration, path_obs_data)
+    Volumenes_MODFLOW(path_model, dir_iteration, path_obs_data)
+
+    #---------------------------------
+    #---    Objective Function    ----
+    #---------------------------------
+
+    #---    Monitoring wells
+    obs_well = pd.read_csv(os.path.join(path_obs_data, 'Monitoring_wells.csv'), skiprows = 3)
+    obs_well = obs_well.set_index('Unnamed: 0')
+    obs_well = obs_well.transpose()
+    obs_well = obs_well.iloc[260:,:]
+
+    ow = obs_well.columns
+
+    sim_well = pd.read_csv(os.path.join(dir_iteration, f"iter_{str(iteration)}_Simulated_wells.csv"), skiprows = 3)
+    sim_well = sim_well.set_index('Branch')
+    sim_well = sim_well.iloc[260:,:]
+
+    srmse_well = 0
+    for i in ow:
+        df_ = pd.DataFrame()
+        df_['Obs'] = obs_well[i]
+        df_['Sim'] = sim_well['Sim_'+i]
+        df_ = df_.dropna()
+
+        mse_well = mean_squared_error(df_['Obs'], df_['Sim'])
+        rmse_well = math.sqrt(mse_well)
+        srmse_well += rmse_well
+    #print(srmse_well)
+
+    #---    Streamflow gauges
+    sg = ['AlicahueEnColliguay', 'EF_L02_Embalse', 'EF_L07_Confluencia', 'EF_L07_Embalse', 'EF_L09_Confluencia', 
+          'EF_P02_Confluencia', 'EF_P07_Confluencia', 'EF_P07_Embalse', 'EF_P08_Ossandon', 'LiguaEnQuinquimo', 
+          'PedernalenTejada', 'PetorcaEnLongotoma', 'PetorcaEnPenon', 'SobranteEnPinadero']
+
+    srmse_q = 0
+    for j in sg:
+        df_q = pd.read_csv(os.path.join(dir_iteration, f"iter_{str(iteration)}_Q_"+ j) + ".csv", skiprows = 3)
+        df_q = df_q.set_index('Statistic')
+        df_q = df_q.iloc[260:,:]
+        df_q.loc[df_q['Observed'] == ' ', 'Observed'] = np.nan
+        df_q.loc[df_q['Modeled'] == ' ', 'Modeled'] = np.nan
+        df_q = df_q.dropna()
+
+        mse_q = mean_squared_error(df_q['Observed'], df_q['Modeled'])
+        rmse_q = math.sqrt(mse_q)
+        srmse_q += rmse_q
+    #print(srmse_q)
+
+    #---    Subject to
+    kx_min = 0.000864
+    kx_max = 86.4
+    sy_min = 0.01
+    sy_max = 0.14
+
+    for i in HP:
+        globals()["vector_modif_" + str(i)] = get_eliminate_zeros(globals()["vector_" + str(i)].tolist())
+        globals()["P_" + str(i)] = get_evaluate_st_bounds((locals()[str(i) + "_min"]), (locals()[str(i) + "_max"]), globals()["vector_modif_" + str(i)])
+
+    """
+    #---    Streamflow penalization - Empty results
+    for h in sg:
+        df_q = pd.read_csv(os.path.join(dir_iteration, f"iter_{str(iteration)}_Q_"+ j + ".csv"), skiprows = 3)
+        df_q = df_q.set_index('Statistic')
+        df_q = df_q.iloc[260:,:]
+        df_q.loc[df_q['Modeled'] == ' ', 'Modeled'] = np.nan
+        df_q_null = df_q.isnull()
+        freq = df_q_null.groupby(['Modeled']).count()
+    #print('True: ', int(freq.iloc[1]))
+
+    if int(freq.iloc[1]) > 0:
+        P_q = 100
+    else:
+        P_q = 0
+        """
+    
+    #---    Cells penalization
+    Aq_zones = ['L01', 'L02', 'L05', 'L06', 'L09', 'L10', 'L12', 'P01', 'P02', 'P03', 'P07', 'P08_v1', 'P08_v2']
+
+    error_cells_aum = 0
+    error_cells_dis = 0
+    for k in Aq_zones:
+        df_cells = pd.read_csv(os.path.join(dir_iteration, f"iter_{str(iteration)}_Cells_"+ k + ".csv"), skiprows = 3)
+        df_cells = df_cells.set_index('Branch')
+        #df_cells = df_cells.iloc[260:,:]
+        df_cells = df_cells.transpose()
+        df_cells['Diference'] = df_cells['Dec 24 2004'] - df_cells['Jan 1 1984']
+        
+        df_c_ = df_cells[df_cells['Diference'] > 30]
+        df_c_min = df_cells[df_cells['Diference'] < -100]
+
+        e_aum = df_c_['Diference'].sum()
+        e_dis = df_c_min['Diference'].sum()
+        #print(e_aum, e_dis)
+        
+        error_cells_aum += e_aum
+        error_cells_dis += e_dis
+
+    #---    Total Objective Function
+    g1 = 0.80
+    g2 = 0.60
+    g3 = 0.60
+    #g4 = 0.60
+    g5 = 0.05
+
+    #of = g1*srmse_well + g2*rmse_q + g3*(P_kx + P_sy) + g4*P_q + g5*(error_cells_aum - error_cells_dis)
+    of = g1*srmse_well + g2*rmse_q + g3*(P_kx + P_sy) + g5*(error_cells_aum - error_cells_dis)
+    print(of)
+    return of

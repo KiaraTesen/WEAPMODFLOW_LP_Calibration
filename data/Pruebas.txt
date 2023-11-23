@@ -104,3 +104,166 @@ lb_1_kx, ub_1_kx = 0.0075, 1.50
 lb_1_sy, ub_1_sy = 0.125, 0.175
 lb_2_kx, ub_2_kx = 0.005, 0.50
 lb_2_sy, ub_2_sy = 0.138, 0.175
+
+Prueba 6:
+lb_kx, ub_kx = 0.250, 8.00			llega a 69.5377 -  0.0001
+lb_sy, ub_sy = 0.850, 1.50			llega a 0.3998 - 0.0077 
+
+lb_1_kx, ub_1_kx = 0.0075, 1.50
+lb_1_sy, ub_1_sy = 0.125, 0.175
+lb_2_kx, ub_2_kx = 0.005, 0.50
+lb_2_sy, ub_2_sy = 0.140, 0.175
+
+Prueba 7:
+lb_kx, ub_kx = 0.500, 8.00			llega a 32.435 - 1.728e-6
+lb_sy, ub_sy = 1, 1.50				llega a 0.469 - 0.0085
+
+lb_1_kx, ub_1_kx = 0.0075, 1.50
+lb_1_sy, ub_1_sy = 0.125, 0.175
+lb_2_kx, ub_2_kx = 0.005, 0.50
+lb_2_sy, ub_2_sy = 0.145, 0.175
+
+Prueba 8:
+lb_kx, ub_kx = 1, 9.00				llega a 75.3377 - 1.728e-6
+lb_sy, ub_sy = 1.25, 1.75			llega a 0.5462 - 0.0086
+
+lb_1_kx, ub_1_kx = 0.0075, 1.50
+lb_1_sy, ub_1_sy = 0.130, 0.170
+lb_2_kx, ub_2_kx = 0.005, 0.50
+lb_2_sy, ub_2_sy = 0.150, 0.175
+
+Prueba 9:
+lb_kx, ub_kx = 2.00, 9.00			llega a 80.1233 -  
+lb_sy, ub_sy = 1.35, 1.50			llega a 0.5178 - 0.0085
+
+lb_1_kx, ub_1_kx = 0.0075, 1.50
+lb_1_sy, ub_1_sy = 0.135, 0.170
+lb_2_kx, ub_2_kx = 0.005, 0.50
+lb_2_sy, ub_2_sy = 0.155, 0.175
+
+# CAMBIO TAMAÑO DE KERNELS
+Prueba 1:
+lb_kx, ub_kx = 2.00, 9.00			llega a 102.7123 - 0.0002
+lb_sy, ub_sy = 1.375, 1.50			llega a 0.3692 - 0.0067
+
+lb_1_kx, ub_1_kx = 0.0075, 1.50
+lb_1_sy, ub_1_sy = 0.140, 0.170
+lb_2_kx, ub_2_kx = 0.005, 0.50
+lb_2_sy, ub_2_sy = 0.160, 0.175
+
+Prueba 2:		
+lb_kx, ub_kx = 2.50, 9.00			llega a 114.446 - 0.0001
+lb_sy, ub_sy = 1.45, 1.50			llega a 0.3781 - 0.0071
+
+lb_1_kx, ub_1_kx = 0.0075, 1.50
+lb_1_sy, ub_1_sy = 0.145, 0.170
+lb_2_kx, ub_2_kx = 0.005, 0.50
+lb_2_sy, ub_2_sy = 0.165, 0.175
+
+Prueba 3:
+lb_kx, ub_kx = 3, 8.75				llega a 93.514 - 0.0001
+lb_sy, ub_sy = 1.50, 1.55			llega a 0.3979 - 0.0072
+
+lb_1_kx, ub_1_kx = 0.01, 1.50
+lb_1_sy, ub_1_sy = 0.150, 0.170
+lb_2_kx, ub_2_kx = 0.005, 0.50
+lb_2_sy, ub_2_sy = 0.1675, 0.175
+
+# CAMBIO TAMAÑO DE KERNELS
+lb_kx, ub_kx = 3, 8.75				llega a 173.53 - 1.7286e-6		
+lb_sy, ub_sy = 1.525, 1.55			llega a 0.8232 - 0.0168
+	
+lb_1_kx, ub_1_kx = 0.01, 1.50
+lb_1_sy, ub_1_sy = 0.155, 0.170
+lb_2_kx, ub_2_kx = 0.0075, 0.50
+lb_2_sy, ub_2_sy = 0.170, 0.175			
+
+Prueba 2:
+lb_kx, ub_kx = 3, 8.75				llega a 258.7941 -  0.0001
+lb_sy, ub_sy = 1.50, 1.525			llega a 0.7503 - 0.016
+
+lb_1_kx, ub_1_kx = 0.01, 1.50
+lb_1_sy, ub_1_sy = 0.150, 0.165
+lb_2_kx, ub_2_kx = 0.0075, 0.50
+lb_2_sy, ub_2_sy = 0.1625, 0.170
+
+Prueba 3:
+lb_kx, ub_kx = 3, 7				llega a 235.828 - 0.0003
+lb_sy, ub_sy = 1.475, 1.50			llega a 0.7161 - 0.0152
+
+lb_1_kx, ub_1_kx = 0.0175, 1.50
+lb_1_sy, ub_1_sy = 0.1525, 0.160
+lb_2_kx, ub_2_kx = 0.01, 0.50
+lb_2_sy, ub_2_sy = 0.160, 0.1675
+
+Prueba 4:
+lb_kx, ub_kx = 3, 6				llega a 140.4845 - 0.0001
+lb_sy, ub_sy = 1.40, 1.45			llega a 0.6712 - 0.0143
+
+lb_1_kx, ub_1_kx = 0.0175, 1.0
+lb_1_sy, ub_1_sy = 0.15, 0.1575
+lb_2_kx, ub_2_kx = 0.01, 0.50
+lb_2_sy, ub_2_sy = 0.160, 0.1675
+
+Prueba 5:
+lb_kx, ub_kx = 3, 5.5				llega a 139.2214 - 0.0001
+lb_sy, ub_sy = 1.25, 1.35			llega a 0.6109 - 0.0128
+
+lb_1_kx, ub_1_kx = 0.02, 1.0
+lb_1_sy, ub_1_sy = 0.1475, 0.155
+lb_2_kx, ub_2_kx = 0.02, 0.50
+lb_2_sy, ub_2_sy = 0.1575, 0.165
+
+Prueba 6:
+lb_kx, ub_kx = 3, 5				llega a 97.42 - 0.0001
+lb_sy, ub_sy = 1.20, 1.30			llega a 0.5183 - 0.011
+
+lb_1_kx, ub_1_kx = 0.05, 1.0
+lb_1_sy, ub_1_sy = 0.14, 0.145
+lb_2_kx, ub_2_kx = 0.05, 0.50
+lb_2_sy, ub_2_sy = 0.1525, 0.1575
+
+Prueba 7:
+lb_kx, ub_kx = 3.25, 5				llega a 99.4101 -  0.0001
+lb_sy, ub_sy = 1.20, 1.250			llega a 0.5046 - 0.0107
+
+lb_1_kx, ub_1_kx = 0.075, 1.0
+lb_1_sy, ub_1_sy = 0.14, 0.1425
+lb_2_kx, ub_2_kx = 0.075, 0.50
+lb_2_sy, ub_2_sy = 0.1525, 0.1550
+
+Prueba 8:
+lb_kx, ub_kx = 3.25, 5				llega a 153.8083 -  0.0001
+lb_sy, ub_sy = 1.175, 1.2			llega a 0.4727 - 0.0101
+
+lb_1_kx, ub_1_kx = 0.075, 1.0
+lb_1_sy, ub_1_sy = 0.1375, 0.14
+lb_2_kx, ub_2_kx = 0.075, 0.50
+lb_2_sy, ub_2_sy = 0.15, 0.1525			FUNCIONAAA!!
+
+# CAMBIA TAMAÑO KERNELS
+lb_kx, ub_kx = 3.25, 4.75			llega a 154 - 0.0002
+lb_sy, ub_sy = 1.175, 1.90			llega a 0.3148 - 0.0052
+
+lb_1_kx, ub_1_kx = 0.075, 0.95
+lb_1_sy, ub_1_sy = 0.1375, 0.1395
+lb_2_kx, ub_2_kx = 0.075, 0.50
+lb_2_sy, ub_2_sy = 0.15, 0.1515
+
+PRUEBA 2:
+lb_kx, ub_kx = 3, 4.5				llega a 122 - 0.0002
+lb_sy, ub_sy = 1.2, 1.90			llega a 0.402 - 0.0065
+
+lb_1_kx, ub_1_kx = 0.075, 0.95
+lb_1_sy, ub_1_sy = 0.15, 0.17
+lb_2_kx, ub_2_kx = 0.075, 0.50
+lb_2_sy, ub_2_sy = 0.15, 0.17
+
+Prueba 3:
+lb_kx, ub_kx = 3, 4.5				llega a 112 - 
+lb_sy, ub_sy = 1.75, 1.90			llega a 0.4369
+
+lb_1_kx, ub_1_kx = 0.075, 0.95
+lb_1_sy, ub_1_sy = 0.15, 0.17
+lb_2_kx, ub_2_kx = 0.075, 0.50
+lb_2_sy, ub_2_sy = 0.15, 0.17

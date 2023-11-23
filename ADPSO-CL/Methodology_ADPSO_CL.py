@@ -80,7 +80,7 @@ pob = Particle(np.around(np.array([0]*(n_var)),5),np.around(np.array([0]*(n_var)
 
 if ITERATION == 0:
     with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
-        pob.x = np.copy(f["pob_x"][0])                   # pob.x = np.copy(f["pob_x"][VM-2])
+        pob.x = np.copy(f["pob_x"][1])                   # pob.x = np.copy(f["pob_x"][VM-2])
     f.close()
 
     #---    Initial Sampling - Pob(0)
