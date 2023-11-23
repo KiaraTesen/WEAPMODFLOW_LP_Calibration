@@ -11,7 +11,7 @@ import os
 from functools import reduce
 import time
 import sys
-#from request_server.request_server import send_request_py
+from request_server.request_server import send_request_py
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -24,13 +24,13 @@ VM = int(sys.argv[5])
 
 #---    Paths
 # TEMPORAL PATHS
-path_WEAP = r'C:\Users\aimee\Documents\WEAP Areas\Ligua_Petorca_WEAP_MODFLOW_RDM'
+path_WEAP = r'C:\Users\vagrant\Documents\WEAP Areas\Ligua_Petorca_WEAP_MODFLOW_RDM'
 path_model = os.path.join(path_WEAP, 'NWT_v24')
-path_init_model = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_initial'
-path_nwt_exe = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\MODFLOW-NWT_1.2.0\bin\MODFLOW-NWT_64.exe'
-path_GIS = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\GIS'
-path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
-path_obs_data = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\ObservedData'
+path_init_model = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_initial'
+path_nwt_exe = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\MODFLOW-NWT_1.2.0\bin\MODFLOW-NWT_64.exe'
+path_GIS = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\GIS'
+path_output = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
+path_obs_data = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\ObservedData'
 
 #---    Initial matriz
 HP = ['kx', 'sy'] 
@@ -80,14 +80,14 @@ pob = Particle(np.around(np.array([0]*(n_var)),5),np.around(np.array([0]*(n_var)
 
 if ITERATION == 0:
     with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
-        pob.x = np.copy(f["pob_x"][1])                   # pob.x = np.copy(f["pob_x"][VM-2])
+        pob.x = np.copy(f["pob_x"][VM-2])
     f.close()
 
     #---    Initial Sampling - Pob(0)
     y_init = Run_WEAP_MODFLOW(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var_3, n_var, 
                               k_shape_1, k_shape_2, k_shape_3, k_shape_4, active_matriz, path_init_model, path_model, path_nwt_exe, 
                               path_obs_data)
-    """                          
+                           
     pob.y = y_init
     pob.y_best = y_init
 
@@ -120,7 +120,7 @@ else:
     vMax = np.around(np.multiply(u_bounds-l_bounds,0.8),4)      # Max velocity # De 0.8 a 0.4
     vMin = -vMax                                                # Min velocity
 
-    with h5py.File('DPSO_historial.h5', 'r') as f:
+    with h5py.File('ADPSO-CL_historial.h5', 'r') as f:
         pob.x = np.copy(f["pob_x"][ITERATION - 1])
         pob.y = f["pob_y"][ITERATION - 1]
         pob.v = np.copy(f["pob_v"][ITERATION - 1])
@@ -175,7 +175,7 @@ else:
     w = w_max - (ITERATION) * ((w_max-w_min)/FINAL_ITERATION)
 
     #---    Iteration register
-    with h5py.File('DPSO_historial.h5', 'a') as f:
+    with h5py.File('ADPSO-CL_historial.h5', 'a') as f:
         f["iteration"][ITERATION] = ITERATION
         f["pob_x"][ITERATION] = np.copy(pob.x)
         f["pob_y"][ITERATION] = pob.y
@@ -185,4 +185,3 @@ else:
 
         f["w"][ITERATION] = w
     f.close()
-    """
