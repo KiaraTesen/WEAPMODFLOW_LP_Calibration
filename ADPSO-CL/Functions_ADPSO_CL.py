@@ -474,7 +474,7 @@ def Run_WEAP_MODFLOW_temp(path_output, iteration, initial_shape_HP, HP, active_c
         df_cells = df_cells.set_index('Branch')
         #df_cells = df_cells.iloc[260:,:]
         df_cells = df_cells.transpose()
-        df_cells['Diference'] = df_cells['Dec 24 2004'] - df_cells['Jan 1 1984']
+        df_cells['Diference'] = df_cells['24-Dec-04'] - df_cells['1-Jan-1984']
         
         df_c_ = df_cells[df_cells['Diference'] > 30]
         df_c_min = df_cells[df_cells['Diference'] < -100]
