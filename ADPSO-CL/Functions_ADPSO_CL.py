@@ -341,7 +341,7 @@ def Run_WEAP_MODFLOW_temp(path_output, iteration, initial_shape_HP, HP, active_c
     obs_well = pd.read_csv(os.path.join(path_obs_data, 'Monitoring_wells.csv'), skiprows = 3)
     obs_well = obs_well.set_index('Unnamed: 0')
     obs_well = obs_well.transpose()
-    obs_well = obs_well.iloc[260:,:]
+    obs_well = obs_well.iloc[260:-832,:]
 
     ow = obs_well.columns
 
@@ -352,14 +352,14 @@ def Run_WEAP_MODFLOW_temp(path_output, iteration, initial_shape_HP, HP, active_c
     srmse_well = 0
     for i in ow:
         df_ = pd.DataFrame()
-        df_['Obs'] = obs_well[i]
-        df_['Sim'] = sim_well['Sim_'+i]
+        df_['Obs'] = np.array(obs_well[i])
+        df_['Sim'] = np.array(sim_well['Sim_'+i])
         df_ = df_.dropna()
-
+        
         mse_well = mean_squared_error(df_['Obs'], df_['Sim'])
         rmse_well = math.sqrt(mse_well)
         srmse_well += rmse_well
-    #print(srmse_well)
+    print(srmse_well)
 
     #---    Streamflow gauges
     sg = ['AlicahueEnColliguay', 'EF_L02_Embalse', 'EF_L07_Confluencia', 'EF_L07_Embalse', 'EF_L09_Confluencia', 
