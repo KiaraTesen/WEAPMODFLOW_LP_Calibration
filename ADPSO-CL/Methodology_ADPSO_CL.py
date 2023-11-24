@@ -84,7 +84,7 @@ if ITERATION == 0:
     f.close()
 
     #---    Initial Sampling - Pob(0)
-    y_init = Run_WEAP_MODFLOW_temp(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var_3, n_var, 
+    y_init = Run_WEAP_MODFLOW(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var_3, n_var, 
                               k_shape_1, k_shape_2, k_shape_3, k_shape_4, active_matriz, path_init_model, path_model, path_nwt_exe, 
                               path_obs_data)
                            
