@@ -333,6 +333,63 @@ def Run_WEAP_MODFLOW_temp(path_output, iteration, initial_shape_HP, HP, active_c
     if not os.path.isdir(dir_iteration):
         os.mkdir(dir_iteration)
 
+    #--------------------------
+    #---    Run MODFLOW    ----
+    #--------------------------
+    #---    Modified matriz
+    pre_shape_HP = initial_shape_HP.copy()
+    shape_k1_HP = initial_shape_HP.copy()
+    new_shape_HP = initial_shape_HP.copy()
+    
+    for m in HP:
+        if m == "kx":
+            begin = 0
+            end = active_cells
+        elif m == "sy":
+            begin = active_cells
+            end = active_cells * 2
+        globals()["matriz_pre_" + str(m)] = get_pre_HP(initial_shape_HP, pre_shape_HP, str(m), sample_scaled, begin, end)
+        get_image_matriz(globals()["matriz_pre_" + str(m)], str(m), os.path.join(dir_iteration, 'Pre_' + str(m) +'.png'))
+        plt.clf
+
+        # CONVOLUTIONAL LAYERS
+        decimals_kx = 4
+        decimals_sy = 4
+
+        # First kernel
+        kernel_1_kx = sample_scaled[int(active_cells * 2):int(active_cells * 2 + n_var_1)].reshape(k_shape_1)
+        kernel_1_sy = sample_scaled[int(active_cells * 2 + n_var_1):int(active_cells * 2 + n_var_1 + n_var_2)].reshape(k_shape_2)
+
+        globals()["matriz_1_" + str(m)] = get_HP(pre_shape_HP, str(m), active_matriz, locals()["decimals_" + str(m)], locals()["kernel_1_" + str(m)])
+        get_image_matriz(globals()["matriz_1_" + str(m)], str(m), os.path.join(dir_iteration, '1_' + str(m) +'.png'))
+        plt.clf()
+        globals()["vector_1_" + str(m)] = globals()["matriz_1_" + str(m)].flatten()
+        shape_k1_HP[m] = globals()["vector_1_" + str(m)]
+
+        # Second kernel
+        kernel_2_kx = sample_scaled[int(active_cells * 2 + n_var_1 + n_var_2):int(active_cells * 2 + n_var_1 + n_var_2 + n_var_3)].reshape(k_shape_3)
+        kernel_2_sy = sample_scaled[int(active_cells * 2 + n_var_1 + n_var_2 + n_var_3):int(n_var)].reshape(k_shape_4)
+        
+        globals()["matriz_" + str(m)] = get_HP(shape_k1_HP, str(m), active_matriz, locals()["decimals_" + str(m)], locals()["kernel_2_" + str(m)])
+        get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
+        plt.clf()
+        globals()["vector_" + str(m)] = globals()["matriz_" + str(m)].flatten()
+        new_shape_HP[m] = globals()["vector_" + str(m)]
+
+    #---    Other variables that MODFLOW require
+    new_shape_HP['kz'] = vector_kx / new_shape_HP['HK/VK']
+
+    rows_ = new_shape_HP["ROW"].max()
+    columns_ = new_shape_HP["COLUMN"].max()
+    matriz_kz = np.zeros((rows_,columns_))
+    for i in range(0,len(new_shape_HP['ROW'])):
+        matriz_kz[new_shape_HP['ROW'][i]-1][new_shape_HP['COLUMN'][i]-1] = new_shape_HP['kz'][i] 
+
+    matriz_ss = matriz_sy/100
+    new_shape_HP['ss'] = matriz_ss.flatten()
+
+    new_shape_HP.to_file(os.path.join(dir_iteration, 'Elements_iter_' + str(iteration) + '.shp'))
+
     #---------------------------------
     #---    Objective Function    ----
     #---------------------------------
