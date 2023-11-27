@@ -61,11 +61,12 @@ print(sample_scaled)
 #---    Iteration register
 for i in range(n):
     with h5py.File('Pre_ADPSO-CL.h5', 'a') as f:
-        f["pob_x"][i] = np.copy(sample_scaled[i])
+        f["pob_x"][i] = np.copy(np.around(sample_scaled[i],4))
     f.close()
 
 #---    Read file to verify
 with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
     x = f["pob_x"][:]
 print(x[0])
+print(x[50])
 print(len(x))

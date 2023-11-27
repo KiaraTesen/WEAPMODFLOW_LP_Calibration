@@ -76,7 +76,7 @@ class Particle:
         self.x_best = np.copy(x)                 
         self.y_best = y
 
-pob = Particle(np.around(np.array([0]*(n_var)),5),np.around(np.array([0]*(n_var)),5),10000000000)
+pob = Particle(np.around(np.array([0]*(n_var)),4),np.around(np.array([0]*(n_var)),4),10000000000)
 
 if ITERATION == 0:
     with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
@@ -89,9 +89,8 @@ if ITERATION == 0:
                               path_obs_data)
                            
     pob.y = y_init
-    print(pob.y)
     pob.y_best = y_init
-    print(pob.y_best)
+
     #---    Create iteration register file
 
     print("Crea FILE")
@@ -133,7 +132,7 @@ else:
         w = f["w"][ITERATION - 1]                               # inertia velocity
     f.close()
     
-    time.sleep(np.random.randint(10,30,size = 1)[0])
+    time.sleep(np.random.randint(10,20,size = 1)[0])
     gbest = send_request_py(IP_SERVER_ADD, pob.y, pob.x)           # Update global particle
 
     #---    Update particle velocity

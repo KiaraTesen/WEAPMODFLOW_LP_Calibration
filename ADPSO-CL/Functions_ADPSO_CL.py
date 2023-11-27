@@ -173,50 +173,50 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     #---    Generate new native files    ----
     #----------------------------------------
 
-    #model = fpm.Modflow.load(path_init_model + '/con_dren_sin_aisladas_NWT.nam', version = 'mfnwt', exe_name = path_nwt_exe)
-    #model.write_input()
-    #model.remove_package("UPW")
-    #upw = fpm.ModflowUpw(model = model, laytyp=1, layavg=0, chani=-1.0, layvka=0, laywet=0, hdry=-888, iphdry=1, hk=matriz_kx, hani=1.0, vka=matriz_kz, ss=matriz_ss, sy=matriz_sy, extension='upw')
-    #upw.write_file()
-    #model.run_model()
+    model = fpm.Modflow.load(path_init_model + '/con_dren_sin_aisladas_NWT.nam', version = 'mfnwt', exe_name = path_nwt_exe)
+    model.write_input()
+    model.remove_package("UPW")
+    upw = fpm.ModflowUpw(model = model, laytyp=1, layavg=0, chani=-1.0, layvka=0, laywet=0, hdry=-888, iphdry=1, hk=matriz_kx, hani=1.0, vka=matriz_kz, ss=matriz_ss, sy=matriz_sy, extension='upw')
+    upw.write_file()
+    model.run_model()
 
     #---    Move native files to WEAP
-    #get_old_files = os.listdir(path_model)
-    #get_new_files = os.listdir(os.getcwd())
+    get_old_files = os.listdir(path_model)
+    get_new_files = os.listdir(os.getcwd())
 
     #---    Delete old files
-    #for g in get_old_files:
-    #    try:
-    #        os.remove(os.path.join(path_model, g))
-    #    except:
-    #        print('No hay archivos')
+    for g in get_old_files:
+        try:
+            os.remove(os.path.join(path_model, g))
+        except:
+            print('No hay archivos')
 
     #---    Move new files
-    #for h in get_new_files:
-    #    if h.endswith('.py') or h == '__pycache__' or h == 'sp' or h.endswith('.txt') or h == 'output' or h.endswith('.ps1') or h.endswith('.h5'):
-    #        pass 
-    #    else:
-    #        shutil.move(os.path.join(os.getcwd(), h), os.path.join(path_model, h))
+    for h in get_new_files:
+        if h.endswith('.py') or h == '__pycache__' or h == 'sp' or h.endswith('.txt') or h == 'output' or h.endswith('.ps1') or h.endswith('.h5'):
+            pass 
+        else:
+            shutil.move(os.path.join(os.getcwd(), h), os.path.join(path_model, h))
 
     #-------------------------------------
     #---    Run WEAP-MODFLOW model    ----
     #-------------------------------------
-    #WEAP = win32.Dispatch("WEAP.WEAPApplication")
-    #WEAP.ActiveArea = "Ligua_Petorca_WEAP_MODFLOW_RDM"
-    #WEAP.Calculate()
+    WEAP = win32.Dispatch("WEAP.WEAPApplication")
+    WEAP.ActiveArea = "Ligua_Petorca_WEAP_MODFLOW_RDM"
+    WEAP.Calculate()
     
     #---    Export results
-    #favorites = pd.read_excel(r"C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\Favorites_WEAP.xlsx")
-    #for i,j in zip(favorites["BranchVariable"],favorites["WEAP Export"]):
-    #    WEAP.LoadFavorite(i)
-    #    WEAP.ExportResults(os.path.join(dir_iteration, f"iter_{str(iteration)}_{j}.csv"), True, True, True, False, False)
+    favorites = pd.read_excel(r"C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\Favorites_WEAP.xlsx")
+    for i,j in zip(favorites["BranchVariable"],favorites["WEAP Export"]):
+        WEAP.LoadFavorite(i)
+        WEAP.ExportResults(os.path.join(dir_iteration, f"iter_{str(iteration)}_{j}.csv"), True, True, True, False, False)
     
     #------------------------------
     #---    MODFLOW Balance    ----
     #------------------------------
-    #MODFLOW_Balance(dir_iteration, path_model, path_obs_data)
-    #Processing_Balance(dir_iteration, path_obs_data)
-    #Volumenes_MODFLOW(path_model, dir_iteration, path_obs_data)
+    MODFLOW_Balance(dir_iteration, path_model, path_obs_data)
+    Processing_Balance(dir_iteration, path_obs_data)
+    Volumenes_MODFLOW(path_model, dir_iteration, path_obs_data)
     
     #---------------------------------
     #---    Objective Function    ----
