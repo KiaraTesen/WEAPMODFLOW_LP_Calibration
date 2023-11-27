@@ -168,7 +168,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     new_shape_HP['ss'] = matriz_ss.flatten()
 
     new_shape_HP.to_file(os.path.join(dir_iteration, 'Elements_iter_' + str(iteration) + '.shp'))
-
+    """
     #----------------------------------------
     #---    Generate new native files    ----
     #----------------------------------------
@@ -221,7 +221,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     #---------------------------------
     #---    Objective Function    ----
     #---------------------------------
-
+    """
     #---    Monitoring wells
     obs_well = pd.read_csv(os.path.join(path_obs_data, 'Monitoring_wells.csv'), skiprows = 3)
     obs_well = obs_well.set_index('Unnamed: 0')
@@ -263,7 +263,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
         mse_q = mean_squared_error(df_q['Observed'], df_q['Modeled'])
         rmse_q = math.sqrt(mse_q)
         srmse_q += rmse_q
-    #print(srmse_q)
+    print(srmse_q)
 
     #---    Subject to
     kx_min = 0.000864

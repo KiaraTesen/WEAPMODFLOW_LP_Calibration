@@ -89,9 +89,12 @@ if ITERATION == 0:
                               path_obs_data)
                            
     pob.y = y_init
+    print(pob.y)
     pob.y_best = y_init
-
+    print(pob.y_best)
     #---    Create iteration register file
+
+    print("Crea FILE")
     with h5py.File('ADPSO-CL_historial.h5', 'w') as f:
         iter_h5py = f.create_dataset("iteration", (FINAL_ITERATION, 1))
         pob_x_h5py = f.create_dataset("pob_x", (FINAL_ITERATION, n_var))
