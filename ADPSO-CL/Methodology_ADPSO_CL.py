@@ -87,9 +87,11 @@ if ITERATION == 0:
     y_init = Run_WEAP_MODFLOW(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var_3, n_var, 
                               k_shape_1, k_shape_2, k_shape_3, k_shape_4, active_matriz, path_init_model, path_model, path_nwt_exe, 
                               path_obs_data)
-                           
+    print("se calculó OF: ", y_init)
+    
     pob.y = y_init
     pob.y_best = y_init
+    print("Se cambia y & y_best: ", pob.y, pob.y_best)
 
     #---    Create iteration register file
 
@@ -112,7 +114,7 @@ if ITERATION == 0:
         pob_y_best_h5py[0] = pob.y_best
         pob_w_h5py[0] = 0.5
     f.close()
-
+    print("Guarda el FILE con datos")
 else:
     #---    PSO
     α = 0.8                                                    # Cognitive scaling parameter  # 0.8 # 1.49
