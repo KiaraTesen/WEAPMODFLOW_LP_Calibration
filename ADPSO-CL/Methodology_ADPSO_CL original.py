@@ -23,6 +23,7 @@ FINAL_ITERATION = int(sys.argv[4])
 VM = int(sys.argv[5])
 
 #---    Paths
+# TEMPORAL PATHS
 path_WEAP = r'C:\Users\vagrant\Documents\WEAP Areas\Ligua_Petorca_WEAP_MODFLOW_RDM'
 path_model = os.path.join(path_WEAP, 'NWT_v24')
 path_init_model = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_initial'
@@ -77,47 +78,62 @@ class Particle:
 
 pob = Particle(np.around(np.array([0]*(n_var)),4),np.around(np.array([0]*(n_var)),4),10000000000)
 
-#---    Initial Sampling - Pob(0)
-ITERATION = 0
-with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
-    pob.x = np.copy(f["pob_x"][VM-2])
-f.close()
+if ITERATION == 0:
+    with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
+        pob.x = np.copy(f["pob_x"][VM-2])
+    f.close()
 
-y_init = Run_WEAP_MODFLOW(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var_3, n_var, 
-                            k_shape_1, k_shape_2, k_shape_3, k_shape_4, active_matriz, path_init_model, path_model, path_nwt_exe, 
-                            path_obs_data)
-print("se calculó OF: ", y_init)
+    #---    Initial Sampling - Pob(0)
+    y_init = Run_WEAP_MODFLOW(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var_3, n_var, 
+                              k_shape_1, k_shape_2, k_shape_3, k_shape_4, active_matriz, path_init_model, path_model, path_nwt_exe, 
+                              path_obs_data)
+    print("se calculó OF: ", y_init)
+    
+    pob.y = y_init
+    pob.y_best = y_init
+    print("Se cambia y & y_best: ", pob.y, pob.y_best)
 
-pob.x_best = np.copy(pob.x)
-pob.y = y_init
-pob.y_best = y_init
-print("Se cambia y & y_best: ", pob.y, pob.y_best)
+    #---    Create iteration register file
 
+    print("Crea FILE")
+    with h5py.File('ADPSO-CL_historial.h5', 'w') as f:
+        iter_h5py = f.create_dataset("iteration", (FINAL_ITERATION, 1))
+        pob_x_h5py = f.create_dataset("pob_x", (FINAL_ITERATION, n_var))
+        pob_y_h5py = f.create_dataset("pob_y", (FINAL_ITERATION, 1))
+        pob_v_h5py = f.create_dataset("pob_v", (FINAL_ITERATION, n_var))
+        pob_x_best_h5py = f.create_dataset("pob_x_best", (FINAL_ITERATION, n_var))
+        pob_y_best_h5py = f.create_dataset("pob_y_best", (FINAL_ITERATION, 1))
+        pob_w_h5py = f.create_dataset("w", (FINAL_ITERATION, 1))
 
-# Guarda file con resultados
-df_results = pd.DataFrame(columns = ('pob_x', 'pob_y', 'pob_x_best', 'pob_y_best'))
+    #---    Iteration register
+        iter_h5py[0] = ITERATION
+        pob_x_h5py[0] = np.copy(pob.x)
+        pob_y_h5py[0] = pob.y
+        pob_v_h5py[0] = np.copy(pob.v)
+        pob_x_best_h5py[0] = np.copy(pob.x_best)
+        pob_y_best_h5py[0] = pob.y_best
+        pob_w_h5py[0] = 0.5
+    f.close()
+    print("Guarda el FILE con datos")
+else:
+    #---    PSO
+    α = 0.8                                                    # Cognitive scaling parameter  # 0.8 # 1.49
+    β = 0.8                                                    # Social scaling parameter     # 0.8 # 1.49                       
+    w_min = 0.4                                                 # minimum value for the inertia velocity
+    w_max = 0.9                                                 # maximum value for the inertia velocity
+    vMax = np.around(np.multiply(u_bounds-l_bounds,0.8),4)      # Max velocity # De 0.8 a 0.4
+    vMin = -vMax                                                # Min velocity
 
-# Guarda iter_0 results
-df_results.loc[int(ITERATION), 'pob_x'] = np.copy(pob.x)
-df_results.loc[int(ITERATION), 'pob_y'] = pob.y
-df_results.loc[int(ITERATION), 'pob_x_best'] = np.copy(pob.x_best)
-df_results.loc[int(ITERATION), 'pob_y_best'] = pob.y_best
-print("Guarda el df con datos iter_0")
+    with h5py.File('ADPSO-CL_historial.h5', 'r') as f:
+        pob.x = np.copy(f["pob_x"][ITERATION - 1])
+        pob.y = f["pob_y"][ITERATION - 1]
+        pob.v = np.copy(f["pob_v"][ITERATION - 1])
+        pob.x_best = np.copy(f["pob_x_best"][ITERATION - 1])
+        pob.y_best = f["pob_y_best"][ITERATION - 1]
 
-#---    Siguientes iteraciones
-
-#---    PSO setup
-α = 0.8                                                     # Cognitive scaling parameter  # 0.8 # 1.49
-β = 0.8                                                     # Social scaling parameter     # 0.8 # 1.49                       
-w_min = 0.4                                                 # minimum value for the inertia velocity
-w_max = 0.9                                                 # maximum value for the inertia velocity
-vMax = np.around(np.multiply(u_bounds-l_bounds,0.8),4)      # Max velocity # De 0.8 a 0.4
-vMin = -vMax
-w = 0.5                                                     # inertia velocity
-
-ITERATION = 1
-for it in range(ITERATION, FINAL_ITERATION):
-
+        w = f["w"][ITERATION - 1]                               # inertia velocity
+    f.close()
+    
     time.sleep(np.random.randint(10,20,size = 1)[0])
     gbest = send_request_py(IP_SERVER_ADD, pob.y, pob.x)           # Update global particle
 
@@ -163,11 +179,13 @@ for it in range(ITERATION, FINAL_ITERATION):
     w = w_max - (ITERATION) * ((w_max-w_min)/FINAL_ITERATION)
 
     #---    Iteration register
-    df_results.loc[int(ITERATION), 'pob_x'] = np.copy(pob.x)
-    df_results.loc[int(ITERATION), 'pob_y'] = pob.y
-    df_results.loc[int(ITERATION), 'pob_x_best'] = np.copy(pob.x_best)
-    df_results.loc[int(ITERATION), 'pob_y_best'] = pob.y_best
+    with h5py.File('ADPSO-CL_historial.h5', 'a') as f:
+        f["iteration"][ITERATION] = ITERATION
+        f["pob_x"][ITERATION] = np.copy(pob.x)
+        f["pob_y"][ITERATION] = pob.y
+        f["pob_v"][ITERATION] = np.copy(pob.v)
+        f["pob_x_best"][ITERATION] = np.copy(pob.x_best)
+        f["pob_y_best"][ITERATION] = pob.y_best
 
-    ITERATION += 1
-
-df_results.to_csv(path_output + '/ADPSO_CL_register_vm' + str(VM) + '.csv')
+        f["w"][ITERATION] = w
+    f.close()
