@@ -274,11 +274,33 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     for i in HP:
         globals()["vector_modif_" + str(i)] = get_eliminate_zeros(globals()["vector_" + str(i)].tolist())
         globals()["P_" + str(i)] = get_evaluate_st_bounds((locals()[str(i) + "_min"]), (locals()[str(i) + "_max"]), globals()["vector_modif_" + str(i)])
+    
+    #---    Cells penalization
+    Aq_zones = ['L01', 'L02', 'L05', 'L06', 'L09', 'L10', 'L12', 'P01', 'P02', 'P03', 'P07', 'P08_v1', 'P08_v2']
+
+    error_cells_aum = 0
+    error_cells_dis = 0
+    for k in Aq_zones:
+        df_cells = pd.read_csv(os.path.join(dir_iteration, f"iter_{str(iteration)}_Cells_"+ k + ".csv"), skiprows = 3)
+        df_cells = df_cells.set_index('Branch')
+        df_cells = df_cells.transpose()
+        df_cells['Diference'] = df_cells['24 Dec 2004'] - df_cells['1 Jan 1984']
+        
+        df_c_ = df_cells[df_cells['Diference'] > 30]
+        df_c_min = df_cells[df_cells['Diference'] < -100]
+
+        e_aum = df_c_['Diference'].sum()
+        e_dis = df_c_min['Diference'].sum()
+        #print(e_aum, e_dis)
+        
+        error_cells_aum += e_aum
+        error_cells_dis += e_dis
 
     #---    Total Objective Function
     g1 = 0.80
     g2 = 0.60
     g3 = 0.60
+    g4 = 0.05
 
-    of = g1*srmse_well + g2*rmse_q + g3*(P_kx + P_sy)
+    of = g1*srmse_well + g2*rmse_q + g3*(P_kx + P_sy) + g4*(error_cells_aum - error_cells_dis)
     return of
