@@ -14,7 +14,7 @@ from CriteriosSustentabilidad import *
 import warnings
 warnings.filterwarnings('ignore')
 
-#---    Visualization of the matriz -
+#---    Visualization of the matriz
 def get_image_matriz(matriz, variable, path_out):
     fig=plt.figure(figsize = (16,8))
     ax = plt.axes()
@@ -43,14 +43,12 @@ def get_pre_HP(Shape_HP, new_Shape, variable, particle, begin, end):
             if new_Shape[variable][i] == 0:
                 new_Shape[variable][i] = 0.01
             else:
-                #print(count, x[count], Shape_HP[variable][i])
                 new_Shape[variable][i] = round(x[count] * Shape_HP[variable][i],4)
                 count += 1
         else:
             if new_Shape[variable][i] == 0:
                 new_Shape[variable][i] = 0.000001728
             else:
-                #print(count, x[count], Shape_HP[variable][i])
                 new_Shape[variable][i] = round(x[count] * Shape_HP[variable][i],4)
                 count += 1
         
@@ -60,7 +58,6 @@ def get_pre_HP(Shape_HP, new_Shape, variable, particle, begin, end):
     matriz = np.zeros((rows,columns))
     for i in range(0,len(new_Shape['ROW'])):
         matriz[new_Shape['ROW'][i]-1][new_Shape['COLUMN'][i]-1] = new_Shape[variable][i] 
-    #print(matriz)
     return matriz
 
 #---    Modification 2 of HP
@@ -115,6 +112,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     #--------------------------
     #---    Run MODFLOW    ----
     #--------------------------
+
     #---    Modified matriz
     pre_shape_HP = initial_shape_HP.copy()
     shape_k1_HP = initial_shape_HP.copy()
@@ -131,11 +129,11 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
         get_image_matriz(globals()["matriz_pre_" + str(m)], str(m), os.path.join(dir_iteration, 'Pre_' + str(m) +'.png'))
         plt.clf
 
-        # CONVOLUTIONAL LAYERS
+        #---    CLs
         decimals_kx = 4
         decimals_sy = 4
 
-        # First kernel
+        #---    First kernel
         kernel_1_kx = sample_scaled[int(active_cells * 2):int(active_cells * 2 + n_var_1)].reshape(k_shape_1)
         kernel_1_sy = sample_scaled[int(active_cells * 2 + n_var_1):int(active_cells * 2 + n_var_1 + n_var_2)].reshape(k_shape_2)
 
@@ -145,7 +143,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
         globals()["vector_1_" + str(m)] = globals()["matriz_1_" + str(m)].flatten()
         shape_k1_HP[m] = globals()["vector_1_" + str(m)]
 
-        # Second kernel
+        #---    Second kernel
         kernel_2_kx = sample_scaled[int(active_cells * 2 + n_var_1 + n_var_2):int(active_cells * 2 + n_var_1 + n_var_2 + n_var_3)].reshape(k_shape_3)
         kernel_2_sy = sample_scaled[int(active_cells * 2 + n_var_1 + n_var_2 + n_var_3):int(n_var)].reshape(k_shape_4)
         

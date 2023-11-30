@@ -10,7 +10,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #---    Initial matriz
-n = 35                                                 # Population size: 20 o 35
+n = 20                                                 # Population size: 20 o 35
 
 active_cells = 18948
 
@@ -68,5 +68,5 @@ for i in range(n):
 with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
     x = f["pob_x"][:]
 print(x[0])
-print(x[50])
+print(x[19])
 print(len(x))
