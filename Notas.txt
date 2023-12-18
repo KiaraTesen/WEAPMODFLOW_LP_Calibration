@@ -1,0 +1,9 @@
+# PATHS PRUEBA
+
+path_WEAP = r'C:\Users\aimee\Documents\WEAP Areas\Ligua_Petorca_WEAP_MODFLOW_RDM'
+path_model = os.path.join(path_WEAP, 'NWT_v24')
+path_init_model = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_initial'
+path_nwt_exe = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\MODFLOW-NWT_1.2.0\bin\MODFLOW-NWT_64.exe'
+path_GIS = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\GIS'
+path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
+path_obs_data = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\ObservedData'

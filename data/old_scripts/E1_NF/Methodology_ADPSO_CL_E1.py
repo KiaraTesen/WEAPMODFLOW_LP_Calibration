@@ -18,6 +18,7 @@ warnings.filterwarnings('ignore')
 IP_SERVER_ADD = sys.argv[1]
 TOTAL_ITERATION = int(sys.argv[2])
 FINAL_ITERATION = int(sys.argv[3])
+
 VM = int(sys.argv[4])
 
 #---    Paths
@@ -36,31 +37,33 @@ active_matriz = initial_shape_HP['ACTIVEL1'].to_numpy().reshape((263,371))      
 
 active_cells = 18948
 
-k_shape_1 = (3,3)   # HK_1
+k_shape_1 = (5,5)   # HK_1
 k_shape_2 = (3,3)   # SY_1
 k_shape_3 = (3,3)   # HK_2
+k_shape_4 = (3,3)   # SY_2
 
 n_var = active_cells * 2
-for k in range(1,4):
+for k in range(1,5):
     globals()['n_var_' + str(k)] = reduce(lambda x,y: x*y, globals()['k_shape_' + str(k)])
     n_var += globals()['n_var_' + str(k)]
 n_var = n_var       # Number of variables
 print (n_var)
 
 #---    Bounds
-lb_kx, ub_kx = 0.001, 10
-lb_sy, ub_sy = 0.015, 5
+lb_kx, ub_kx = 3.25, 5
+lb_sy, ub_sy = 1.175, 1.2
 
-lb_1_kx, ub_1_kx = 0.0750, 1.0000
-lb_1_sy, ub_1_sy = 0.0050, 0.0500
-lb_2_kx, ub_2_kx = 0.0750, 0.5000
+lb_1_kx, ub_1_kx = 0.075, 1.0
+lb_1_sy, ub_1_sy = 0.1375, 0.14
+lb_2_kx, ub_2_kx = 0.075, 0.50
+lb_2_sy, ub_2_sy = 0.15, 0.1525	
 
 l_bounds = np.concatenate((np.around(np.repeat(lb_kx, active_cells),4), np.around(np.repeat(lb_sy, active_cells),4), 
                            np.around(np.repeat(lb_1_kx, n_var_1),4), np.around(np.repeat(lb_1_sy, n_var_2),4), 
-                           np.around(np.repeat(lb_2_kx, n_var_3),4)), axis = 0)
+                           np.around(np.repeat(lb_2_kx, n_var_3),4), np.around(np.repeat(lb_2_sy, n_var_4),4)), axis = 0)
 u_bounds = np.concatenate((np.around(np.repeat(ub_kx, active_cells),4), np.around(np.repeat(ub_sy, active_cells),4), 
                            np.around(np.repeat(ub_1_kx, n_var_1),4), np.around(np.repeat(ub_1_sy, n_var_2),4), 
-                           np.around(np.repeat(ub_2_kx, n_var_3),4)), axis = 0) 
+                           np.around(np.repeat(ub_2_kx, n_var_3),4), np.around(np.repeat(ub_2_sy, n_var_4),4)), axis = 0) 
 
 #---    Initial Sampling (Latyn Hypercube)
 class Particle:
@@ -81,7 +84,8 @@ with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
 f.close()
 
 y_init = Run_WEAP_MODFLOW(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var_3, n_var, 
-                          k_shape_1, k_shape_2, k_shape_3, active_matriz, path_init_model, path_model, path_nwt_exe, path_obs_data)
+                          k_shape_1, k_shape_2, k_shape_3, k_shape_4, active_matriz, path_init_model, path_model, path_nwt_exe, 
+                          path_obs_data)
 
 pob.x_best = np.copy(pob.x)
 pob.y = y_init
@@ -142,7 +146,8 @@ for it in range(ITERATION, FINAL_ITERATION):
 
     #---    Evaluate the fitnness function
     y = Run_WEAP_MODFLOW(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var_3, n_var, 
-                         k_shape_1, k_shape_2, k_shape_3, active_matriz, path_init_model, path_model, path_nwt_exe, path_obs_data)
+                         k_shape_1, k_shape_2, k_shape_3, k_shape_4, active_matriz, path_init_model, path_model, path_nwt_exe, 
+                         path_obs_data)
     
     if y < pob.y_best:
         pob.x_best = np.copy(pob.x)

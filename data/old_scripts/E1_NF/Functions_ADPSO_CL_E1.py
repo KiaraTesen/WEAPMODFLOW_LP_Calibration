@@ -102,7 +102,9 @@ def get_evaluate_st_bounds(min_v, max_v, vector_modif):
     return P_min + P_max
 
 def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells, sample_scaled, n_var_1, n_var_2, n_var_3, n_var, 
-                     k_shape_1, k_shape_2, k_shape_3, active_matriz, path_init_model, path_model, path_nwt_exe, path_obs_data):
+                     k_shape_1, k_shape_2, k_shape_3, k_shape_4, active_matriz, path_init_model, path_model, path_nwt_exe, 
+                     path_obs_data):
+
     dir_iteration = os.path.join(path_output, "iter_" + str(iteration))
     if not os.path.isdir(dir_iteration):
         os.mkdir(dir_iteration)
@@ -110,7 +112,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     #--------------------------
     #---    Run MODFLOW    ----
     #--------------------------
-        
+
     #---    Modified matriz
     pre_shape_HP = initial_shape_HP.copy()
     shape_k1_HP = initial_shape_HP.copy()
@@ -142,23 +144,15 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
         shape_k1_HP[m] = globals()["vector_1_" + str(m)]
 
         #---    Second kernel
-        if m == "kx":
-            kernel_2_kx = sample_scaled[int(active_cells * 2 + n_var_1 + n_var_2):int(active_cells * 2 + n_var_1 + n_var_2 + n_var_3)].reshape(k_shape_3)
-            
-            globals()["matriz_" + str(m)] = get_HP(shape_k1_HP, str(m), active_matriz, locals()["decimals_" + str(m)], locals()["kernel_2_" + str(m)])
-            get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
-            plt.clf()
-            globals()["vector_" + str(m)] = globals()["matriz_" + str(m)].flatten()
-            new_shape_HP[m] = globals()["vector_" + str(m)]
-
-        elif m == "sy":
-            globals()["matriz_" + str(m)] = globals()["matriz_1_" + str(m)]
-            globals()["matriz_" + str(m)] = np.where(globals()["matriz_" + str(m)] < 0.01, 0.01, globals()["matriz_" + str(m)])
-            get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
-            plt.clf()
-            globals()["vector_" + str(m)] = globals()["matriz_" + str(m)].flatten()
-            new_shape_HP[m] = globals()["vector_" + str(m)]
+        kernel_2_kx = sample_scaled[int(active_cells * 2 + n_var_1 + n_var_2):int(active_cells * 2 + n_var_1 + n_var_2 + n_var_3)].reshape(k_shape_3)
+        kernel_2_sy = sample_scaled[int(active_cells * 2 + n_var_1 + n_var_2 + n_var_3):int(n_var)].reshape(k_shape_4)
         
+        globals()["matriz_" + str(m)] = get_HP(shape_k1_HP, str(m), active_matriz, locals()["decimals_" + str(m)], locals()["kernel_2_" + str(m)])
+        get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
+        plt.clf()
+        globals()["vector_" + str(m)] = globals()["matriz_" + str(m)].flatten()
+        new_shape_HP[m] = globals()["vector_" + str(m)]
+
     #---    Other variables that MODFLOW require
     new_shape_HP['kz'] = vector_kx / new_shape_HP['HK/VK']
 
@@ -172,7 +166,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     new_shape_HP['ss'] = matriz_ss.flatten()
 
     new_shape_HP.to_file(os.path.join(dir_iteration, 'Elements_iter_' + str(iteration) + '.shp'))
-
+    
     #----------------------------------------
     #---    Generate new native files    ----
     #----------------------------------------
@@ -280,7 +274,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
         globals()["P_" + str(i)] = get_evaluate_st_bounds((locals()[str(i) + "_min"]), (locals()[str(i) + "_max"]), globals()["vector_modif_" + str(i)])
 
     #---    Total Objective Function
-    g1 = 1
+    g1 = 0.80
     g2 = 0.60
     g3 = 0.60
 
