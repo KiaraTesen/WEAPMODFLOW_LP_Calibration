@@ -17,10 +17,10 @@ import win32com.client as win32
 import math
 
 
-best_exp = 'E1'
+best_exp = 'E2'
 best_vm = 'vm15'
 best_iter = 25
-path_best = os.path.join(r'D:\2_PaperII_LP', best_exp, best_vm, 'iter_' + str(best_iter))
+path_best = os.path.join(r'C:\Users\aimee\OneDrive - Universidad Católica de Chile\II-Paper_SimulationOptimizationModel_LP\ResultadosPrueba', best_exp, best_vm, 'iter_' + str(best_iter))
 
 #----------------------------------
 #---    Streamflow analysis    ----

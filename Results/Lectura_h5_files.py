@@ -6,11 +6,12 @@ import scipy.stats as st
 import warnings
 warnings.filterwarnings('ignore')
 
-path_results = r'D:\2_PaperII_LP'
+#path_results = r'D:\2_PaperII_LP'
+path_results = r'C:\Users\aimee\OneDrive - Universidad Católica de Chile\II-Paper_SimulationOptimizationModel_LP\ResultadosPrueba'
 
-exp = ['E1']
+exp = ['E2']
 vms = range(2, 22)
-iter = range(27)
+iter = range(26)
 
 df_r = pd.DataFrame(index = list(iter))
 for i in exp:
@@ -21,7 +22,7 @@ for i in exp:
         df_r['y_' + str(i) + '_vm_' + str(j)] = df['pob_y']
 
 df_r_lg = np.log(df_r)
-df_r_lg.to_csv('E1.csv')
+df_r_lg.to_csv('E2.csv')
 #print(df_r)
 #print(df_r_lg)
 
@@ -35,9 +36,8 @@ df_reg = pd.DataFrame(index = ['Upper CI - 95%', 'Lower CI - 95%', 'Mean'])
 for n in iter:
     df_value = df_r_lg.transpose().iloc[:,n]
     df_value = df_value.dropna()
-    #print(df_value)
 
-    CI = st.norm.interval(alpha = 0.95, loc = np.mean(df_value), scale = st.sem(df_value))
+    CI = st.norm.interval(0.95, loc = np.mean(df_value), scale = st.sem(df_value))
     mean_value = np.mean(df_value)
     Lower_CI, Upper_CI = CI[0], CI[1]
 
@@ -50,7 +50,7 @@ print(df_reg_T)
 
 #---    GRAPH
 L_bound = 5
-U_bound = 8
+U_bound = 17
 
 fs_title = 21
 fs_others = 18
@@ -72,6 +72,6 @@ plt.xlabel('Iterations', fontsize = fs_others, weight = 'bold')
 plt.ylabel('log E', fontsize = fs_others, weight = 'bold')
 plt.legend(loc = 'upper right', fontsize = fs_others)
 
-plt.savefig('LogE_vs_iter.png', dpi = 1200)
-plt.savefig('LogE_vs_iter,eps', format = 'eps', dpi = 1200)
+plt.savefig('LogE_vs_iter_E2.png', dpi = 1200)
+plt.savefig('LogE_vs_iter_E2.eps', format = 'eps', dpi = 1200)
 plt.clf
