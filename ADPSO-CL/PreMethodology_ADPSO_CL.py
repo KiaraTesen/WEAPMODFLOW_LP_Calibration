@@ -10,7 +10,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #---    Initial matriz
-n = 15                                                 # Population size: 20 o 35
+n = 3                                                # Population size: 20 o 35
 
 active_cells = 18948
 
