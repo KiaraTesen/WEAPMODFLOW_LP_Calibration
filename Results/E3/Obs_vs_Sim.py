@@ -17,9 +17,9 @@ import win32com.client as win32
 import math
 
 
-best_exp = 'E2'
-best_vm = 'vm15'
-best_iter = 25
+best_exp = 'E3'
+best_vm = 'vm3'
+best_iter = 7
 path_best = os.path.join(r'C:\Users\aimee\OneDrive - Universidad Católica de Chile\II-Paper_SimulationOptimizationModel_LP\ResultadosPrueba', best_exp, best_vm, 'iter_' + str(best_iter))
 
 #----------------------------------
@@ -66,7 +66,7 @@ for j in sg:
     rmse_q = math.sqrt(mse_q)                                                               # RMSE
     kge_q, r, alpha, beta = he.evaluator(he.kge, mod, np.array(obs, dtype = float))         # KGE
     mae_q = mean_absolute_error(obs, mod)                                                   # MAE
-    print(j,' RMSE: ', rmse_q, ' KGE: ', kge_q[0], ' MAE: ', mae_q)
+    #print(j,' RMSE: ', rmse_q, ' KGE: ', kge_q[0], ' MAE: ', mae_q)
     #---    Continue graph
     """
     ymax = max(mod.max(), np.array(obs, dtype = float).max())
@@ -80,6 +80,11 @@ for j in sg:
 #--------------------------------
 #---    Observation wells    ----
 #--------------------------------
+pc_well = pd.read_csv(r'..\data\Simulated_wells_PC.csv', skiprows = 3)
+pc_well = pc_well.set_index('Branch')
+pc_well = pc_well.iloc[260:, :]
+print(pc_well)
+
 obs_well = pd.read_csv(r'..\data\ObservedData\Monitoring_wells.csv', skiprows = 3)
 obs_well = obs_well.set_index('Unnamed: 0')
 obs_well = obs_well.transpose()
@@ -90,18 +95,21 @@ ow = obs_well.columns
 sim_well = pd.read_csv(os.path.join(path_best, 'iter_' + str(best_iter) + '_Simulated_wells.csv'), skiprows = 3)
 sim_well = sim_well.set_index('Branch')
 sim_well = sim_well.iloc[260:, :]
+print(sim_well)
 
 for p in ow[1:]:
     df_w = pd.DataFrame()
     df_w['obs'] = np.array(obs_well[p])
     df_w.loc[df_w['obs'] == ' ', 'obs'] = np.nan
     df_w['sim'] = np.array(sim_well['Sim_' + p])
+    df_w['pc'] = np.array(pc_well['Sim_' + p])
     df_w = df_w.set_index(pd.to_datetime(sim_well.index))
 
     #---    Graphs
     fig2, ax2 = plt.subplots(figsize=(14, 7))
     ax2.plot(df_w.index, df_w['obs'].astype(float), "o", label = 'Obs', color = "black", linewidth = 0.1)
     ax2.plot(df_w.index, df_w['sim'], label = 'ADPSO-CL', color = "red", linewidth = 0.75)
+    ax2.plot(df_w.index, df_w['pc'], label = 'Pre Calib', color = "blue", linewidth = 0.75)
 
     title = 'Wells - ' + str(p)
     plt.xticks(fontsize = 18)
@@ -123,7 +131,7 @@ for p in ow[1:]:
     rmse_w = math.sqrt(mse_w)                                                               # RMSE
     kge_w, r, alpha, beta = he.evaluator(he.kge, mod_w, np.array(obs_w, dtype = float))         # KGE
     mae_w = mean_absolute_error(obs_w, mod_w)                                                   # MAE
-    print(p, ' RMSE: ', rmse_w, ' KGE: ', kge_w[0], ' MAE: ', mae_w)
+    #print(p, ' RMSE: ', rmse_w, ' KGE: ', kge_w[0], ' MAE: ', mae_w)
     #---    Continue graph
     """
     ymax2 = max(mod_w.max(), np.array(obs_w, dtype = float).max())

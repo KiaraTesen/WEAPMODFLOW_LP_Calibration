@@ -9,26 +9,20 @@ warnings.filterwarnings('ignore')
 #path_results = r'D:\2_PaperII_LP'
 path_results = r'C:\Users\aimee\OneDrive - Universidad Católica de Chile\II-Paper_SimulationOptimizationModel_LP\ResultadosPrueba'
 
-exp = ['E2']
-vms = range(2, 22)
-iter = range(26)
+exp = ['E3']
+vms = range(2, 17)
+iter = range(10)
 
 df_r = pd.DataFrame(index = list(iter))
 for i in exp:
     for j in vms:
-        df = pd.read_csv(os.path.join(path_results, i, 'vm' + str(j), 'ADPSO_CL_register_vm' + str(j) + '.csv'))
+        df = pd.read_csv(os.path.join(path_results, i, 'ADPSO_CL_register_vm' + str(j) + '.csv'))
         #print(df)
 
         df_r['y_' + str(i) + '_vm_' + str(j)] = df['pob_y']
 
 df_r_lg = np.log(df_r)
-df_r_lg.to_csv('E2.csv')
-#print(df_r)
-#print(df_r_lg)
-
-#plt.plot(df_r_lg)
-#plt.show()
-#plt.clf()
+df_r_lg.to_csv('E3.csv')
 
 #---    Confidence Intervals
 df_reg = pd.DataFrame(index = ['Upper CI - 95%', 'Lower CI - 95%', 'Mean'])
@@ -50,7 +44,7 @@ print(df_reg_T)
 
 #---    GRAPH
 L_bound = 5
-U_bound = 17
+U_bound = 20
 
 fs_title = 21
 fs_others = 18
@@ -61,17 +55,17 @@ ax.plot(range(len(df_reg_T)), df_reg_T.loc[:, 'Lower CI - 95%'], color = 'black'
 ax.plot(range(len(df_reg_T)), df_reg_T.loc[:, 'Mean'], color = '#A52A2A', linewidth = 0.75, linestyle = 'solid', label = 'Mean')
 
 xlim = len(iter)
-plt.xticks(range(0, xlim, 20), fontsize = fs_others)
+plt.xticks(range(0, xlim, 1), fontsize = fs_others)
 plt.xlim(0, xlim)
 plt.yticks(fontsize = fs_others)
 plt.ylim(L_bound, U_bound)
 
-title = 'NP = 20, ADPSO-CL'
+title = 'NP = 15, ADPSO-CL'
 plt.title(str(title), fontsize = fs_title, weight = 'bold')
 plt.xlabel('Iterations', fontsize = fs_others, weight = 'bold')
 plt.ylabel('log E', fontsize = fs_others, weight = 'bold')
 plt.legend(loc = 'upper right', fontsize = fs_others)
 
-plt.savefig('LogE_vs_iter_E2.png', dpi = 1200)
-plt.savefig('LogE_vs_iter_E2.eps', format = 'eps', dpi = 1200)
+plt.savefig('LogE_vs_iter_E3.png', dpi = 1200)
+plt.savefig('LogE_vs_iter_E3.eps', format = 'eps', dpi = 1200)
 plt.clf
