@@ -21,9 +21,9 @@ FINAL_ITERATION = int(sys.argv[3])
 VM = int(sys.argv[4])
 
 #---    Paths
-path_WEAP = r'C:\Users\vagrant\Documents\WEAP Areas\Ligua_Petorca_WEAP_MODFLOW_RDM'
-path_model = os.path.join(path_WEAP, 'NWT_v24')
-path_init_model = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_initial'
+path_WEAP = r'C:\Users\vagrant\Documents\WEAP Areas\Ligua_WEAP_MODFLOW'
+path_model = os.path.join(path_WEAP, 'NWT_L_v1')
+path_init_model = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_L_initial'
 path_nwt_exe = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\MODFLOW-NWT_1.2.0\bin\MODFLOW-NWT_64.exe'
 path_GIS = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\GIS'
 path_output = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
@@ -31,10 +31,10 @@ path_obs_data = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\Obs
 
 #---    Initial matriz
 HP = ['kx', 'sy'] 
-initial_shape_HP = gpd.read_file(path_GIS + '/SuperfitialGeology_initial_values.shp')
-active_matriz = initial_shape_HP['ACTIVEL1'].to_numpy().reshape((263,371))                  # Matrix of zeros and ones that allows maintaining active area
+initial_shape_HP = gpd.read_file(path_GIS + '/SuperfitialGeology_Ligua_initial_values.shp')
+active_matriz = initial_shape_HP['ACTIVEL1'].to_numpy().reshape((174,371))                  # Matrix of zeros and ones that allows maintaining active area
 
-active_cells = 18948
+active_cells = 10440
 
 k_shape_1 = (3,3)   # HK
 k_shape_2 = (3,3)   # SY

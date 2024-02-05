@@ -133,6 +133,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
 
         if m == "kx":
             globals()["matriz_" + str(m)] = get_HP(pre_shape_HP, str(m), active_matriz, decimals, locals()["kernel_" + str(m)])
+            globals()["matriz_" + str(m)] = np.where(globals()["matriz_" + str(m)] < 0.0000000001, 0.0000000001, globals()["matriz_" + str(m)])
             get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
             plt.clf()
             globals()["vector_" + str(m)] = globals()["matriz_" + str(m)].flatten()
@@ -141,6 +142,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
         elif m == "sy":
             globals()["matriz_" + str(m)] = get_HP(pre_shape_HP, str(m), active_matriz, decimals, locals()["kernel_" + str(m)])
             globals()["matriz_" + str(m)] = np.where(globals()["matriz_" + str(m)] < 0.01, 0.01, globals()["matriz_" + str(m)])
+            globals()["matriz_" + str(m)] = np.where(globals()["matriz_" + str(m)] > 0.5, 0.5, globals()["matriz_" + str(m)])
             get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
             plt.clf()
             globals()["vector_" + str(m)] = globals()["matriz_" + str(m)].flatten()
@@ -193,7 +195,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     #---    Run WEAP-MODFLOW model    ----
     #-------------------------------------
     WEAP = win32.Dispatch("WEAP.WEAPApplication")
-    WEAP.ActiveArea = "Ligua_Petorca_WEAP_MODFLOW_RDM"
+    WEAP.ActiveArea = "Ligua_WEAP_MODFLOW"
     WEAP.Calculate()
     
     #---    Export results
@@ -235,12 +237,10 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
         mse_well = mean_squared_error(df_['Obs'], df_['Sim'])
         rmse_well = math.sqrt(mse_well)
         srmse_well += rmse_well
-    print(srmse_well)
+    #print(srmse_well)
 
     #---    Streamflow gauges
-    sg = ['AlicahueEnColliguay', 'EF_L02_Embalse', 'EF_L07_Confluencia', 'EF_L07_Embalse', 'EF_L09_Confluencia', 
-          'EF_P02_Confluencia', 'EF_P07_Confluencia', 'EF_P07_Embalse', 'EF_P08_Ossandon', 'LiguaEnQuinquimo', 
-          'PedernalenTejada', 'PetorcaEnLongotoma', 'PetorcaEnPenon', 'SobranteEnPinadero']
+    sg = ['AlicahueEnColliguay', 'EF_L02_Embalse', 'EF_L07_Confluencia', 'EF_L07_Embalse', 'EF_L09_Confluencia', 'LiguaEnQuinquimo']
 
     srmse_q = 0
     for j in sg:
@@ -254,7 +254,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
         mse_q = mean_squared_error(df_q['Observed'], df_q['Modeled'])
         rmse_q = math.sqrt(mse_q)
         srmse_q += rmse_q
-    print(srmse_q)
+    #print(srmse_q)
 
     #---    Subject to
     kx_min = 0.000864

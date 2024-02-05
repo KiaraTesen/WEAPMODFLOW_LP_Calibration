@@ -10,9 +10,9 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #---    Initial matriz
-n = 2                                                # Population size: 10 o 15
+n = 15                                                # Population size: 10 o 15
 
-active_cells = 18948
+active_cells = 10440
 
 k_shape_1 = (3,3)   # HK
 k_shape_2 = (3,3)   # SY

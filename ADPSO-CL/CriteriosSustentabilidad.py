@@ -35,12 +35,12 @@ def Volumenes_MODFLOW(path_model, dir_iteration, path_obs_data):
     key_hed = lambda s: s.rsplit('_')[-3]    # Con esto selecciono el escenario con el cual generare grupos
     Scenario = []
 
-    zones = ['P01','P02','P03','P07','P08','L01','L02','L05','L06','L09','L10','L12']  # Zone Budget Zones
-    aliases = {1: 'P01',2: 'P02',3: 'P03',4:'P07',5:'P08',6:'L01',7:'L02',8:'L05',9:'L06',10:'L09',11:'L10',12:'L12'}
+    zones = ['L01','L02','L05','L06','L09','L10','L12']  # Zone Budget Zones
+    aliases = {1:'L01', 2:'L02', 3:'L05', 4:'L06', 5:'L09', 6:'L10', 7:'L12'}
     Shac = len(zones)
 
     cell_A = 200*200    # Tamaño celda, info que se debe extraer manualmente de la grilla MODFLOW
-    rows = 263          # Cantidad de filas, info que se puede extraer de la grilla MODFLOW, el .dis, .zbr o el .zb_zones
+    rows = 174          # Cantidad de filas, info que se puede extraer de la grilla MODFLOW, el .dis, .zbr o el .zb_zones
     columns = 371      # Cantidad de columnas, info que se puede extraer de la grilla MODFLOW, el .dis, .zbr o el .zb_zones
 
     # Leer archivo .DIS para extraer info de TOP y BOTTOM
@@ -98,7 +98,7 @@ def Volumenes_MODFLOW(path_model, dir_iteration, path_obs_data):
     f = open(Pth_UPW,'r')
     Values_Ss = []
 
-    lines_to_read = list(range(537, 800))
+    lines_to_read = list(range(359, 533))
     for position, line in enumerate(f):
         if position in lines_to_read:
             line = line[2:]
@@ -109,10 +109,11 @@ def Volumenes_MODFLOW(path_model, dir_iteration, path_obs_data):
 
     Ss_mod = np.array(list(chain(*Values_Ss)))
     Ss_mod.resize((rows,columns), refcheck=False)
+    #print(Ss_mod)
 
     f = open(Pth_UPW,'r')
     Values_Sy = []
-    lines_to_read = list(range(801, 1065))
+    lines_to_read = list(range(534, 708))
 
     for position, line in enumerate(f):
         if position in lines_to_read:
@@ -124,6 +125,7 @@ def Volumenes_MODFLOW(path_model, dir_iteration, path_obs_data):
 
     Sy_mod = np.array(list(chain(*Values_Sy)))
     Sy_mod.resize((rows,columns), refcheck=False)
+    #print(Sy_mod)
     
     for i in range(len(filelisthed)-1):
         if key_hed(filelisthed[i]) =='S00' or key_hed(filelisthed[i])=='S01':   #Descarto corrida 0 y año base

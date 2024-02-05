@@ -86,9 +86,9 @@ def MODFLOW_Balance(dir_iteration, path_model, path_obs_data):
 
     # Variables
     nombre_archivo_ZB = 'Zones.zbr'
-    nombre_carpeta_MF = 'NWT_v24'
-    zones = ['P01','P02','P03','P07','P08','L01','L02','L05','L06','L09','L10','L12']  # Zone Budget Zones
-    aliases = {1: 'P01',2: 'P02',3: 'P03',4:'P07',5:'P08',6:'L01',7:'L02',8:'L05',9:'L06',10:'L09',11:'L10',12:'L12'} # Alias Zone Budget Zone
+    nombre_carpeta_MF = 'NWT_L_v1'
+    zones = ['L01','L02','L05','L06','L09','L10','L12']  # Zone Budget Zones
+    aliases = {1:'L01', 2:'L02', 3:'L05', 4:'L06', 5:'L09', 6:'L10', 7:'L12'} # Alias Zone Budget Zone
         
     path_salida = directorio
     path_balance = path_model
@@ -139,7 +139,7 @@ def Processing_Balance(dir_iteration, path_obs_data):
                  'Recarga distribuida', 'Recarga', 'Variacion Neta Flujo Mar', 'Afloramiento - DRAIN', 
                  'Afloramiento - RIVER', 'Afloramiento total', 'Bombeos', 'Almacenamiento']
 
-    zones = ['P01','P02','P03','P07','P08','L01','L02','L05','L06','L09','L10','L12']  # Zone Budget Zones
+    zones = ['L01','L02','L05','L06','L09','L10','L12']  # Zone Budget Zones
     # SERIES ANUALES - AÑO HIDROLÓGICO
     for j in zones:
         Resumen = pd.DataFrame(columns = variables)
@@ -149,11 +149,9 @@ def Processing_Balance(dir_iteration, path_obs_data):
         df_temp = get_df_ls(df, fecha)
            
         # ANALISIS
-        FI_in = (df_temp['FROM_ZONE_0'].to_numpy() + df_temp['FROM_P01'].to_numpy() + df_temp['FROM_P02'].to_numpy() + df_temp['FROM_P03'].to_numpy() + df_temp['FROM_P07'].to_numpy() + 
-                 df_temp['FROM_P08'].to_numpy() + df_temp['FROM_L01'].to_numpy() + df_temp['FROM_L02'].to_numpy() + df_temp['FROM_L05'].to_numpy() + df_temp['FROM_L06'].to_numpy() + 
+        FI_in = (df_temp['FROM_ZONE_0'].to_numpy() + df_temp['FROM_L01'].to_numpy() + df_temp['FROM_L02'].to_numpy() + df_temp['FROM_L05'].to_numpy() + df_temp['FROM_L06'].to_numpy() + 
                  df_temp['FROM_L09'].to_numpy() + df_temp['FROM_L10'].to_numpy() + df_temp['FROM_L12'].to_numpy())
-        FI_out = (df_temp['TO_ZONE_0'].to_numpy() + df_temp['TO_P01'].to_numpy() + df_temp['TO_P02'].to_numpy() + df_temp['TO_P03'].to_numpy() + df_temp['TO_P07'].to_numpy() + 
-                  df_temp['TO_P08'].to_numpy() + df_temp['TO_L01'].to_numpy() + df_temp['TO_L02'].to_numpy() + df_temp['TO_L05'].to_numpy() + df_temp['TO_L06'].to_numpy() + 
+        FI_out = (df_temp['TO_ZONE_0'].to_numpy() + df_temp['TO_L01'].to_numpy() + df_temp['TO_L02'].to_numpy() + df_temp['TO_L05'].to_numpy() + df_temp['TO_L06'].to_numpy() + 
                   df_temp['TO_L09'].to_numpy() + df_temp['TO_L10'].to_numpy() + df_temp['TO_L12'].to_numpy())
         Resumen.loc[:,'Variacion Neta Flujo Interacuifero'] = FI_in - FI_out
 
@@ -194,5 +192,4 @@ def Processing_Balance(dir_iteration, path_obs_data):
         Res_anual.set_index(años['Fecha'],inplace = True)
         Res_anual.to_excel(ruta_export_BALANCE + '/Resumen_balance_' + str(j) + '.xlsx')
 
-    Petorca = get_balance_cuenca(ruta_export_BALANCE, 0, 5, zones, variables, años, 'Petorca')
-    Ligua = get_balance_cuenca(ruta_export_BALANCE, 5, 12, zones, variables, años, 'Ligua')
+    Ligua = get_balance_cuenca(ruta_export_BALANCE, 0, 7, zones, variables, años, 'Ligua')
