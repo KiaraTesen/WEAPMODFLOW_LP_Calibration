@@ -86,7 +86,7 @@ def MODFLOW_Balance(dir_iteration, path_model, path_obs_data):
 
     # Variables
     nombre_archivo_ZB = 'Zones.zbr'
-    nombre_carpeta_MF = 'NWT_L_v1'
+    nombre_carpeta_MF = 'NWT_L_v2'
     zones = ['L01','L02','L05','L06','L09','L10','L12']  # Zone Budget Zones
     aliases = {1:'L01', 2:'L02', 3:'L05', 4:'L06', 5:'L09', 6:'L10', 7:'L12'} # Alias Zone Budget Zone
         

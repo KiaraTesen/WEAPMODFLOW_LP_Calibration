@@ -40,8 +40,8 @@ def Volumenes_MODFLOW(path_model, dir_iteration, path_obs_data):
     Shac = len(zones)
 
     cell_A = 200*200    # Tamaño celda, info que se debe extraer manualmente de la grilla MODFLOW
-    rows = 174          # Cantidad de filas, info que se puede extraer de la grilla MODFLOW, el .dis, .zbr o el .zb_zones
-    columns = 371      # Cantidad de columnas, info que se puede extraer de la grilla MODFLOW, el .dis, .zbr o el .zb_zones
+    rows = 172          # Cantidad de filas, info que se puede extraer de la grilla MODFLOW, el .dis, .zbr o el .zb_zones
+    columns = 369      # Cantidad de columnas, info que se puede extraer de la grilla MODFLOW, el .dis, .zbr o el .zb_zones
 
     # Leer archivo .DIS para extraer info de TOP y BOTTOM
     f = open(Pth_DIS,'r')
@@ -98,7 +98,7 @@ def Volumenes_MODFLOW(path_model, dir_iteration, path_obs_data):
     f = open(Pth_UPW,'r')
     Values_Ss = []
 
-    lines_to_read = list(range(359, 533))
+    lines_to_read = list(range(355, 527))
     for position, line in enumerate(f):
         if position in lines_to_read:
             line = line[2:]
@@ -113,7 +113,7 @@ def Volumenes_MODFLOW(path_model, dir_iteration, path_obs_data):
 
     f = open(Pth_UPW,'r')
     Values_Sy = []
-    lines_to_read = list(range(534, 708))
+    lines_to_read = list(range(528, 700))
 
     for position, line in enumerate(f):
         if position in lines_to_read:
