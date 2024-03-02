@@ -92,14 +92,14 @@ if ITERATION == 0:
     pob.y_best = y_init
 
     #---    Create iteration register file
-    with h5py.File('ADPSO_CL_register_vm' + str(VM) + '.h5', 'w') as f:
-        iter_h5py = f.create_dataset("iteration", (FINAL_ITERATION, 1))
-        pob_x_h5py = f.create_dataset("pob_x", (FINAL_ITERATION, n_var))
-        pob_y_h5py = f.create_dataset("pob_y", (FINAL_ITERATION, 1))
-        pob_v_h5py = f.create_dataset("pob_v", (FINAL_ITERATION, n_var))
-        pob_x_best_h5py = f.create_dataset("pob_x_best", (FINAL_ITERATION, n_var))
-        pob_y_best_h5py = f.create_dataset("pob_y_best", (FINAL_ITERATION, 1))
-        pob_w_h5py = f.create_dataset("w", (FINAL_ITERATION, 1))
+    with h5py.File('ADPSO_CL_register_vm' + str(VM) + '.h5', 'w') as g:
+        iter_h5py = g.create_dataset("iteration", (FINAL_ITERATION, 1))
+        pob_x_h5py = g.create_dataset("pob_x", (FINAL_ITERATION, n_var))
+        pob_y_h5py = g.create_dataset("pob_y", (FINAL_ITERATION, 1))
+        pob_v_h5py = g.create_dataset("pob_v", (FINAL_ITERATION, n_var))
+        pob_x_best_h5py = g.create_dataset("pob_x_best", (FINAL_ITERATION, n_var))
+        pob_y_best_h5py = g.create_dataset("pob_y_best", (FINAL_ITERATION, 1))
+        pob_w_h5py = g.create_dataset("w", (FINAL_ITERATION, 1))
 
     #---    Iteration register
         iter_h5py[0] = ITERATION
@@ -109,7 +109,7 @@ if ITERATION == 0:
         pob_x_best_h5py[0] = np.copy(pob.x_best)
         pob_y_best_h5py[0] = pob.y_best
         pob_w_h5py[0] = 0.5
-    f.close()
+    g.close()
 
     ITERATION += 1
 
@@ -168,16 +168,16 @@ if ITERATION == 0:
         w = w_max - (ITERATION) * ((w_max-w_min)/FINAL_ITERATION)
 
         #---    Iteration register
-        with h5py.File('ADPSO_CL_register_vm' + str(VM) + '.h5', 'a') as f:
-            f["iteration"][ITERATION] = ITERATION
-            f["pob_x"][ITERATION] = np.copy(pob.x)
-            f["pob_y"][ITERATION] = pob.y
-            f["pob_v"][ITERATION] = np.copy(pob.v)
-            f["pob_x_best"][ITERATION] = np.copy(pob.x_best)
-            f["pob_y_best"][ITERATION] = pob.y_best
+        with h5py.File('ADPSO_CL_register_vm' + str(VM) + '.h5', 'a') as g:
+            g["iteration"][ITERATION] = ITERATION
+            g["pob_x"][ITERATION] = np.copy(pob.x)
+            g["pob_y"][ITERATION] = pob.y
+            g["pob_v"][ITERATION] = np.copy(pob.v)
+            g["pob_x_best"][ITERATION] = np.copy(pob.x_best)
+            g["pob_y_best"][ITERATION] = pob.y_best
 
-            f["w"][ITERATION] = w
-        f.close()
+            g["w"][ITERATION] = w
+        g.close()
 
         ITERATION += 1
 
@@ -192,15 +192,15 @@ else:
     vMin = -vMax
     w = 0.5                                                     # inertia velocity
 
-    with h5py.File('ADPSO_CL_register_vm' + str(VM) + '.h5', 'r') as f:
-        pob.x = np.copy(f["pob_x"][ITERATION - 1])
-        pob.y = f["pob_y"][ITERATION - 1]
-        pob.v = np.copy(f["pob_v"][ITERATION - 1])
-        pob.x_best = np.copy(f["pob_x_best"][ITERATION - 1])
-        pob.y_best = f["pob_y_best"][ITERATION - 1]
+    with h5py.File('ADPSO_CL_register_vm' + str(VM) + '.h5', 'r') as g:
+        pob.x = np.copy(g["pob_x"][ITERATION - 1])
+        pob.y = g["pob_y"][ITERATION - 1]
+        pob.v = np.copy(g["pob_v"][ITERATION - 1])
+        pob.x_best = np.copy(g["pob_x_best"][ITERATION - 1])
+        pob.y_best = g["pob_y_best"][ITERATION - 1]
 
-        w = f["w"][ITERATION - 1]                               # inertia velocity
-    f.close()
+        w = g["w"][ITERATION - 1]                               # inertia velocity
+    g.close()
 
     for it in range(ITERATION, FINAL_ITERATION):
         
@@ -248,15 +248,15 @@ else:
         w = w_max - (ITERATION) * ((w_max-w_min)/FINAL_ITERATION)
 
         #---    Iteration register
-        with h5py.File('ADPSO_CL_register_vm' + str(VM) + '.h5', 'a') as f:
-            f["iteration"][ITERATION] = ITERATION
-            f["pob_x"][ITERATION] = np.copy(pob.x)
-            f["pob_y"][ITERATION] = pob.y
-            f["pob_v"][ITERATION] = np.copy(pob.v)
-            f["pob_x_best"][ITERATION] = np.copy(pob.x_best)
-            f["pob_y_best"][ITERATION] = pob.y_best
+        with h5py.File('ADPSO_CL_register_vm' + str(VM) + '.h5', 'a') as g:
+            g["iteration"][ITERATION] = ITERATION
+            g["pob_x"][ITERATION] = np.copy(pob.x)
+            g["pob_y"][ITERATION] = pob.y
+            g["pob_v"][ITERATION] = np.copy(pob.v)
+            g["pob_x_best"][ITERATION] = np.copy(pob.x_best)
+            g["pob_y_best"][ITERATION] = pob.y_best
 
-            f["w"][ITERATION] = w
-        f.close()
+            g["w"][ITERATION] = w
+        g.close()
 
         ITERATION += 1
