@@ -7,23 +7,24 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #path_results = r'D:\2_PaperII_LP'
-path_results = r'C:\Users\aimee\OneDrive - Universidad Católica de Chile\II-Paper_SimulationOptimizationModel_LP\ResultadosPrueba'
+#path_results = r'C:\Users\aimee\OneDrive - Universidad Católica de Chile\II-Paper_SimulationOptimizationModel_LP\ResultadosPrueba'
+path_results = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\Results'
 
-exp = ['E3']
-vms = range(2, 17)
-iter = range(10)
+exp = ['L_E1']
+vms = list(range(2, 7)) + list(range(8, 17))          # 15 workers (De la 2 a la 16)
+iter = range(70)
 
 df_r = pd.DataFrame(index = list(iter))
 for i in exp:
     for j in vms:
-        df = pd.read_csv(os.path.join(path_results, i, 'ADPSO_CL_register_vm' + str(j) + '.csv'))
+        df = pd.read_csv(os.path.join(i, 'ADPSO_CL_register_vm' + str(j) + '.csv'))
         #print(df)
 
         df_r['y_' + str(i) + '_vm_' + str(j)] = df['pob_y']
 
 df_r_lg = np.log(df_r)
-df_r_lg.to_csv('E3.csv')
-
+df_r_lg.to_csv(os.path.join(i, str(i) + '.csv'))
+"""
 #---    Confidence Intervals
 df_reg = pd.DataFrame(index = ['Upper CI - 95%', 'Lower CI - 95%', 'Mean'])
 
@@ -69,3 +70,4 @@ plt.legend(loc = 'upper right', fontsize = fs_others)
 plt.savefig('LogE_vs_iter_E3.png', dpi = 1200)
 plt.savefig('LogE_vs_iter_E3.eps', format = 'eps', dpi = 1200)
 plt.clf
+"""

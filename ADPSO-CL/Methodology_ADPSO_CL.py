@@ -70,17 +70,16 @@ class Particle:
 pob = Particle(np.around(np.array([0]*(n_var)),4),np.around(np.array([0]*(n_var)),4),10000000000)
 
 #---    Initial Sampling - Pob(0)
-dir_file = 'ADPSO_CL_register_vm.h5'
+dir_file = os.path.join(path_output, 'ADPSO_CL_register_vm' + str(VM) + '.h5')
 if not os.path.isfile(dir_file):
     ITERATION = 0
 else:
-    with h5py.File('ADPSO_CL_register_vm.h5', 'r') as f:
+    with h5py.File(dir_file, 'r') as f:
         n_recap = len(f["pob_x"][:])
     ITERATION = n_recap
 print(ITERATION)
 
 if ITERATION == 0:
-
     with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
         pob.x = np.copy(f["pob_x"][VM-2])
     f.close()
@@ -92,7 +91,7 @@ if ITERATION == 0:
     pob.y_best = y_init
 
     #---    Create iteration register file
-    with h5py.File('ADPSO_CL_register_vm.h5', 'w') as g:
+    with h5py.File(dir_file, 'w') as g:
         iter_h5py = g.create_dataset("iteration", (FINAL_ITERATION, 1))
         pob_x_h5py = g.create_dataset("pob_x", (FINAL_ITERATION, n_var))
         pob_y_h5py = g.create_dataset("pob_y", (FINAL_ITERATION, 1))
@@ -168,7 +167,7 @@ if ITERATION == 0:
         w = w_max - (ITERATION) * ((w_max-w_min)/FINAL_ITERATION)
 
         #---    Iteration register
-        with h5py.File('ADPSO_CL_register_vm.h5', 'a') as g:
+        with h5py.File(dir_file, 'a') as g:
             g["iteration"][ITERATION] = ITERATION
             g["pob_x"][ITERATION] = np.copy(pob.x)
             g["pob_y"][ITERATION] = pob.y
@@ -192,7 +191,7 @@ else:
     vMin = -vMax
     w = 0.5                                                     # inertia velocity
 
-    with h5py.File('ADPSO_CL_register_vm.h5', 'r') as g:
+    with h5py.File(dir_file, 'r') as g:
         pob.x = np.copy(g["pob_x"][ITERATION - 1])
         pob.y = g["pob_y"][ITERATION - 1]
         pob.v = np.copy(g["pob_v"][ITERATION - 1])
@@ -248,7 +247,7 @@ else:
         w = w_max - (ITERATION) * ((w_max-w_min)/FINAL_ITERATION)
 
         #---    Iteration register
-        with h5py.File('ADPSO_CL_register_vm.h5', 'a') as g:
+        with h5py.File(dir_file, 'a') as g:
             g["iteration"][ITERATION] = ITERATION
             g["pob_x"][ITERATION] = np.copy(pob.x)
             g["pob_y"][ITERATION] = pob.y
