@@ -1,5 +1,6 @@
 import h5py
-
+import os
+"""
 VM = 2
 ITERATION = 0
 FINAL_ITERATION = 200
@@ -22,3 +23,12 @@ f.close()
 with h5py.File('ADPSO_CL_register_vm' + str(VM) + '.h5', 'r') as f:
     x = f["w"][:]
 print(x)
+"""
+dir_file = 'ADPSO_CL_register_vm.h5'
+if not os.path.isfile(dir_file):
+    ITERATION = 0
+else:
+    with h5py.File('ADPSO_CL_register_vm.h5', 'r') as f:
+        n_recap = len(f["pob_x"][:])
+    ITERATION = n_recap
+print(ITERATION)
