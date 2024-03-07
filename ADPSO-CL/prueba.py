@@ -1,34 +1,52 @@
 import h5py
 import os
-"""
-VM = 2
-ITERATION = 0
-FINAL_ITERATION = 200
-n_var = 30000
+import sys
+import pandas as pd
+import numpy as np
+#from request_server.request_server import send_request_py
 
-with h5py.File('ADPSO_CL_register_vm' + str(VM) + '.h5', 'w') as f:
-    iter_h5py = f.create_dataset("iteration", (FINAL_ITERATION, 1))
-    pob_x_h5py = f.create_dataset("pob_x", (FINAL_ITERATION, n_var))
-    pob_y_h5py = f.create_dataset("pob_y", (FINAL_ITERATION, 1))
-    pob_v_h5py = f.create_dataset("pob_v", (FINAL_ITERATION, n_var))
-    pob_x_best_h5py = f.create_dataset("pob_x_best", (FINAL_ITERATION, n_var))
-    pob_y_best_h5py = f.create_dataset("pob_y_best", (FINAL_ITERATION, 1))
-    pob_w_h5py = f.create_dataset("w", (FINAL_ITERATION, 1))
+#IP_SERVER_ADD = sys.argv[1]
+#TOTAL_ITERATION = int(sys.argv[2])
+#FINAL_ITERATION = int(sys.argv[3])
+#VM = int(sys.argv[4])
 
-#---    Iteration register
-    iter_h5py[0] = ITERATION
-    pob_w_h5py[0] = 0.5
-f.close()
+#path_output = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
+path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
+total_vms = 2
 
-with h5py.File('ADPSO_CL_register_vm' + str(VM) + '.h5', 'r') as f:
-    x = f["w"][:]
-print(x)
-"""
-dir_file = 'ADPSO_CL_register_vm.h5'
-if not os.path.isfile(dir_file):
-    ITERATION = 0
-else:
-    with h5py.File('ADPSO_CL_register_vm.h5', 'r') as f:
-        n_recap = len(f["pob_x"][:])
-    ITERATION = n_recap
-print(ITERATION)
+#df_y = pd.DataFrame(index = range(201*total_vms))
+df_y = pd.DataFrame()
+iter_vm_pre = 0
+for i in range (2, int(total_vms + 2)):
+
+    print('VM = ' + str(i))
+    
+    dir_file = os.path.join(path_output, 'ADPSO_CL_register_vm' + str(i) + '.h5')
+    with h5py.File(dir_file, 'r') as f:
+        x = f["pob_x"][:]
+        v = f["pob_v"][:]
+        y = f["pob_y"][:]
+        x_best = f["pob_x_best"][:]
+        y_best = f["pob_y_best"][:]
+        w = f["w"][:]
+
+        g_best_selected = f["pob_x"][1]
+    f.close()
+
+    print(g_best_selected)
+    iterations = len(x)
+    new_iter = iterations * (i-1)
+    print('Bounds loc: ', iter_vm_pre, ' - ', new_iter - 1)
+    print('Real iteration: 0 - ', iterations - 1)
+    for j in range(iter_vm_pre, new_iter):
+        df_y.loc[j, 'Y'] = y[int(j-new_iter), 0]
+        df_y.loc[j, 'Y_BEST'] = y_best[int(j-new_iter), 0]
+
+        #df_y.loc[df_y["Y-vm" + str(i)] == 0, "Y-vm" + str(i)] = np.nan
+    iter_vm_pre += iterations
+
+print(df_y)
+min_y = min(df_y['Y'])
+loc = df_y[df_y['Y'] == min_y]
+print(loc)
+#gbest = send_request_py(IP_SERVER_ADD, pob.y, pob.x)           # Update global particle

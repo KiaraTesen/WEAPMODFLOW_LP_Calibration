@@ -74,11 +74,11 @@ dir_file = os.path.join(path_output, 'ADPSO_CL_register_vm' + str(VM) + '.h5')
 if not os.path.isfile(dir_file):
     ITERATION = 0
 else:
-    with h5py.File(dir_file, 'r') as f:
+    with h5py.File(dir_file, 'r') as g:
         n_recap = len(f["pob_x"][:])
     ITERATION = n_recap
 print(ITERATION)
-
+"""
 if ITERATION == 0:
     with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
         pob.x = np.copy(f["pob_x"][VM-2])
@@ -259,3 +259,4 @@ else:
         g.close()
 
         ITERATION += 1
+"""
