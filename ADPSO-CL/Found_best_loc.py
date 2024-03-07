@@ -10,9 +10,9 @@ import numpy as np
 #FINAL_ITERATION = int(sys.argv[3])
 #VM = int(sys.argv[4])
 
-#path_output = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
-path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
-total_vms = 2
+path_output = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
+#path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
+total_vms = 1
 
 #df_y = pd.DataFrame(index = range(201*total_vms))
 df_y = pd.DataFrame()
@@ -30,7 +30,7 @@ for i in range (2, int(total_vms + 2)):
         y_best = f["pob_y_best"][:]
         w = f["w"][:]
 
-        g_best_selected = f["pob_x"][1]
+        g_best_selected = f["pob_x"][3]
     f.close()
 
     print(g_best_selected)
@@ -38,11 +38,10 @@ for i in range (2, int(total_vms + 2)):
     new_iter = iterations * (i-1)
     print('Bounds loc: ', iter_vm_pre, ' - ', new_iter - 1)
     print('Real iteration: 0 - ', iterations - 1)
+
     for j in range(iter_vm_pre, new_iter):
         df_y.loc[j, 'Y'] = y[int(j-new_iter), 0]
         df_y.loc[j, 'Y_BEST'] = y_best[int(j-new_iter), 0]
-
-        #df_y.loc[df_y["Y-vm" + str(i)] == 0, "Y-vm" + str(i)] = np.nan
     iter_vm_pre += iterations
 
 print(df_y)
