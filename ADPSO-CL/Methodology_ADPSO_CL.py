@@ -78,7 +78,7 @@ else:
         n_recap = len(g["pob_x"][:])
     ITERATION = n_recap
 print(ITERATION)
-"""
+
 if ITERATION == 0:
     with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
         pob.x = np.copy(f["pob_x"][VM-2])
@@ -201,6 +201,8 @@ else:
         w = g["w"][ITERATION - 1]                               # inertia velocity
     g.close()
 
+    print(pob.x_best)
+"""
     for it in range(ITERATION, FINAL_ITERATION):
         
         time.sleep(np.random.randint(10,20,size = 1)[0])
