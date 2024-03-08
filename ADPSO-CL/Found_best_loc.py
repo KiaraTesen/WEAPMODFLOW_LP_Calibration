@@ -3,18 +3,10 @@ import os
 import sys
 import pandas as pd
 import numpy as np
-#from request_server.request_server import send_request_py
-
-#IP_SERVER_ADD = sys.argv[1]
-#TOTAL_ITERATION = int(sys.argv[2])
-#FINAL_ITERATION = int(sys.argv[3])
-#VM = int(sys.argv[4])
 
 path_output = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
-#path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
-total_vms = 1
+total_vms = 15
 
-#df_y = pd.DataFrame(index = range(201*total_vms))
 df_y = pd.DataFrame()
 iter_vm_pre = 0
 for i in range (2, int(total_vms + 2)):
@@ -48,4 +40,3 @@ print(df_y)
 min_y = min(df_y['Y'])
 loc = df_y[df_y['Y'] == min_y]
 print(loc)
-#gbest = send_request_py(IP_SERVER_ADD, pob.y, pob.x)           # Update global particle
