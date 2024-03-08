@@ -25,7 +25,7 @@ n_var = n_var       # Number of variables
 print (n_var)
 
 #---    Create iteration register file
-with h5py.File('_Pre_ADPSO-CL.h5', 'w') as f:
+with h5py.File('Pre_ADPSO-CL.h5', 'w') as f:
     pob_x_h5py = f.create_dataset("pob_x", (n, n_var))
 
 #---    Bounds
@@ -46,12 +46,12 @@ print(sample_scaled)
 
 #---    Iteration register
 for i in range(n):
-    with h5py.File('_Pre_ADPSO-CL.h5', 'a') as f:
+    with h5py.File('Pre_ADPSO-CL.h5', 'a') as f:
         f["pob_x"][i] = np.copy(np.around(sample_scaled[i],4))
     f.close()
 
 #---    Read file to verify
-with h5py.File('_Pre_ADPSO-CL.h5', 'r') as f:
+with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
     x = f["pob_x"][:]
 print(x[0])
 print(x[int(n-1)])
