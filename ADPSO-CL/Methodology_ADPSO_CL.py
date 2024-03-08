@@ -201,8 +201,6 @@ else:
         w = g["w"][ITERATION - 1]                               # inertia velocity
     g.close()
 
-    print(pob.x_best)
-"""
     for it in range(ITERATION, FINAL_ITERATION):
         
         time.sleep(np.random.randint(10,20,size = 1)[0])
@@ -261,4 +259,3 @@ else:
         g.close()
 
         ITERATION += 1
-"""
