@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 
 path_output = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
+#path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
 total_vms = 15
 
 df_y = pd.DataFrame()
@@ -22,10 +23,10 @@ for i in range (2, int(total_vms + 2)):
         y_best = f["pob_y_best"][:]
         w = f["w"][:]
 
-        g_best_selected = f["pob_x"][3]
+        #g_best_selected = f["pob_x"][3]
     f.close()
 
-    print(g_best_selected)
+    #print(g_best_selected)
     iterations = len(x)
     new_iter = iterations * (i-1)
     print('Bounds loc: ', iter_vm_pre, ' - ', new_iter - 1)
@@ -34,6 +35,8 @@ for i in range (2, int(total_vms + 2)):
     for j in range(iter_vm_pre, new_iter):
         df_y.loc[j, 'Y'] = y[int(j-new_iter), 0]
         df_y.loc[j, 'Y_BEST'] = y_best[int(j-new_iter), 0]
+        df_y.loc[df_y['Y'] == 0, 'Y'] = np.nan
+        df_y.loc[df_y['Y_BEST'] == 0, 'Y_BEST'] = np.nan
     iter_vm_pre += iterations
 
 print(df_y)
