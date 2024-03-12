@@ -4,9 +4,9 @@ import sys
 import pandas as pd
 import numpy as np
 
-path_output = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
-#path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
-total_vms = 15
+#path_output = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
+path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
+total_vms = 1
 
 df_y = pd.DataFrame()
 iter_vm_pre = 0
@@ -22,10 +22,15 @@ for i in range (2, int(total_vms + 2)):
         x_best = f["pob_x_best"][:]
         y_best = f["pob_y_best"][:]
         w = f["w"][:]
-
+        print(y)
         #g_best_selected = f["pob_x"][3]
     f.close()
 
+    indices = np.where(y != 0)
+    print(len(indices[1]))
+    print(y[len(indices[1])-1])
+ 
+    
     #print(g_best_selected)
     iterations = len(x)
     new_iter = iterations * (i-1)

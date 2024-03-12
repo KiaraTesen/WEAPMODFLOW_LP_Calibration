@@ -75,8 +75,10 @@ if not os.path.isfile(dir_file):
     ITERATION = 0
 else:
     with h5py.File(dir_file, 'r') as g:
-        n_recap = len(g["pob_x"][:])
-    ITERATION = n_recap
+        y = g["pob_y"][:]
+        indices = np.where(y != 0)
+        #print(len(indices[1]))
+    ITERATION = len(indices[1])
 print(ITERATION)
 
 if ITERATION == 0:
