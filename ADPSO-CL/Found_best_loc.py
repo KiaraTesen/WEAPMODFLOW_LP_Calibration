@@ -22,7 +22,7 @@ for i in range (2, int(total_vms + 2)):
         x_best = f["pob_x_best"][:]
         y_best = f["pob_y_best"][:]
         w = f["w"][:]
-        print(y)
+        #print(y)
         #g_best_selected = f["pob_x"][3]
     f.close()
 
