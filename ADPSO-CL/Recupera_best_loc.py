@@ -10,8 +10,8 @@ IP_SERVER_ADD = '10.0.0.11:8888'
 path_output = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
 #path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
 
-best_vm = 14         # TO MODIFY
-best_iter = 92       # TO MODIFY
+best_vm = 6         # TO MODIFY
+best_iter = 133       # TO MODIFY
 
 dir_file = os.path.join(path_output, 'ADPSO_CL_register_vm' + str(best_vm) + '.h5')
 
