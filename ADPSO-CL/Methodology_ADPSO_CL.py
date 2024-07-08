@@ -31,16 +31,16 @@ path_obs_data = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\Obs
 
 #---    Initial matriz
 HP = ['kx', 'sy'] 
-initial_shape_HP = gpd.read_file(path_GIS + '/SuperfitialGeology_Ligua_initial_values_v2.shp') ########33
-active_matriz = initial_shape_HP['ACTIVEL1'].to_numpy().reshape((172,369))                  # Matrix of zeros and ones that allows maintaining active area
+initial_shape_HP = gpd.read_file(path_GIS + '/SuperfitialGeology_Ligua_initial_values_v2.shp') 
+active_matriz = initial_shape_HP['ACTIVEL1'].to_numpy().reshape((172,369))                          # Matrix of zeros and ones that allows maintaining active area
 
 active_cells = 10440
 
-k_shape_1 = (3,3)   # HK
-k_shape_2 = (3,3)   # SY
+k_shape_1 = (3,3)                                                                                   # HK
+k_shape_2 = (3,3)                                                                                   # SY
 
 n_var = active_cells * 2
-for k in range(1,3):
+for k in range(1,3):                                                                                # CAMBIA SEGÚN NÚMERO DE KERNELS
     globals()['n_var_' + str(k)] = reduce(lambda x,y: x*y, globals()['k_shape_' + str(k)])
     n_var += globals()['n_var_' + str(k)]
 n_var = n_var       # Number of variables
