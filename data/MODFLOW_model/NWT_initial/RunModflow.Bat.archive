@@ -1,4 +1,0 @@
-if not exist "..\..\output\NUL" mkdir "..\..\output"
-if not exist "..\..\output\output.con_dren_sin_aisladas_NWT\NUL" mkdir "..\..\output\output.con_dren_sin_aisladas_NWT"
-..\..\bin\MODFLOW-NWT_64.exe con_dren_sin_aisladas_NWT.nam /wait
-pause
