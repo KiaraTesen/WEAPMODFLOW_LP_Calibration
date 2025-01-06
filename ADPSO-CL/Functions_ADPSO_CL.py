@@ -14,7 +14,7 @@ from CriteriosSustentabilidad import *
 import warnings
 warnings.filterwarnings('ignore')
 
-#---    Visualization of the matriz
+#---    Visualization of the matriz      ## SE PUEDE ELIMINAR
 def get_image_matriz(matriz, variable, path_out):
     fig=plt.figure(figsize = (16,8))
     ax = plt.axes()
@@ -45,13 +45,19 @@ def get_pre_HP(Shape_HP, new_Shape, variable, particle, begin, end):
             else:
                 new_Shape[variable][i] = round(x[count] * Shape_HP[variable][i],4)
                 count += 1
-        else:
+        elif variable == "kx":
             if new_Shape[variable][i] == 0:
                 new_Shape[variable][i] = 0.000001728
             else:
                 new_Shape[variable][i] = round(x[count] * Shape_HP[variable][i],4)
                 count += 1
-        
+        elif variable == "sy_ss":
+            if new_Shape[variable][i] == 0:
+                new_Shape[variable][i] = 100
+            else:
+                new_Shape[variable][i] = round(x[count],4)
+                count += 1
+
     rows = new_Shape["ROW"].max()
     columns = new_Shape["COLUMN"].max()
 
@@ -123,9 +129,13 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
         elif m == "sy":
             begin = active_cells
             end = active_cells * 2
+        elif m == "sy_ss":
+            begin = n_var
+            end = n_var + active_cells
+
         globals()["matriz_pre_" + str(m)] = get_pre_HP(initial_shape_HP, pre_shape_HP, str(m), sample_scaled, begin, end)
-        get_image_matriz(globals()["matriz_pre_" + str(m)], str(m), os.path.join(dir_iteration, 'Pre_' + str(m) +'.png'))
-        plt.clf
+###        get_image_matriz(globals()["matriz_pre_" + str(m)], str(m), os.path.join(dir_iteration, 'Pre_' + str(m) +'.png'))
+###        plt.clf
 
         #---    CLs
         kernel_kx = sample_scaled[int(active_cells * 2):int(active_cells * 2 + n_var_1)].reshape(k_shape_1)
@@ -134,8 +144,8 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
         if m == "kx":
             globals()["matriz_" + str(m)] = get_HP(pre_shape_HP, str(m), active_matriz, decimals, locals()["kernel_" + str(m)])
             globals()["matriz_" + str(m)] = np.where(globals()["matriz_" + str(m)] < 0.0000000001, 0.0000000001, globals()["matriz_" + str(m)])
-            get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
-            plt.clf()
+###            get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
+###            plt.clf()
             globals()["vector_" + str(m)] = globals()["matriz_" + str(m)].flatten()
             new_shape_HP[m] = globals()["vector_" + str(m)]
 
@@ -143,12 +153,20 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
             globals()["matriz_" + str(m)] = get_HP(pre_shape_HP, str(m), active_matriz, decimals, locals()["kernel_" + str(m)])
             globals()["matriz_" + str(m)] = np.where(globals()["matriz_" + str(m)] < 0.01, 0.01, globals()["matriz_" + str(m)])
             globals()["matriz_" + str(m)] = np.where(globals()["matriz_" + str(m)] > 0.5, 0.5, globals()["matriz_" + str(m)])
-            get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
-            plt.clf()
+###            get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
+###            plt.clf()
+            globals()["vector_" + str(m)] = globals()["matriz_" + str(m)].flatten()
+            new_shape_HP[m] = globals()["vector_" + str(m)]
+        
+        elif m == "sy_ss":
+            globals()["matriz_" + str(m)] = globals()["matriz_pre_" + str(m)]
+###            get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
+###            plt.clf()
             globals()["vector_" + str(m)] = globals()["matriz_" + str(m)].flatten()
             new_shape_HP[m] = globals()["vector_" + str(m)]
         
     #---    Other variables that MODFLOW require
+    #---    #---    kz
     new_shape_HP['kz'] = vector_kx / new_shape_HP['HK/VK']
 
     rows_ = new_shape_HP["ROW"].max()
@@ -157,8 +175,14 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     for i in range(0,len(new_shape_HP['ROW'])):
         matriz_kz[new_shape_HP['ROW'][i]-1][new_shape_HP['COLUMN'][i]-1] = new_shape_HP['kz'][i] 
 
-    matriz_ss = matriz_sy/100
-    new_shape_HP['ss'] = matriz_ss.flatten()
+    #---    #---    ss
+    new_shape_HP['ss'] = vector_sy / new_shape_HP['sy_ss']
+
+    rows_ = new_shape_HP["ROW"].max()
+    columns_ = new_shape_HP["COLUMN"].max()
+    matriz_ss = np.zeros((rows_,columns_))
+    for i in range(0,len(new_shape_HP['ROW'])):
+        matriz_ss[new_shape_HP['ROW'][i]-1][new_shape_HP['COLUMN'][i]-1] = new_shape_HP['ss'][i] 
 
     new_shape_HP.to_file(os.path.join(dir_iteration, 'Elements_iter_' + str(iteration) + '.shp'))
 
@@ -200,6 +224,7 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     
     #---    Export results
     favorites = pd.read_excel(r"C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\Favorites_WEAP.xlsx")
+##    favorites = pd.read_excel(r"C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\Favorites_WEAP.xlsx")
 
     for i,j in zip(favorites["BranchVariable"],favorites["WEAP Export"]):
         WEAP.LoadFavorite(i)
@@ -264,8 +289,11 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     sy_max = 0.14
 
     for i in HP:
-        globals()["vector_modif_" + str(i)] = get_eliminate_zeros(globals()["vector_" + str(i)].tolist())
-        globals()["P_" + str(i)] = get_evaluate_st_bounds((locals()[str(i) + "_min"]), (locals()[str(i) + "_max"]), globals()["vector_modif_" + str(i)])
+        if i == 'sy_ss':
+            pass
+        else:
+            globals()["vector_modif_" + str(i)] = get_eliminate_zeros(globals()["vector_" + str(i)].tolist())
+            globals()["P_" + str(i)] = get_evaluate_st_bounds((locals()[str(i) + "_min"]), (locals()[str(i) + "_max"]), globals()["vector_modif_" + str(i)])
 
     #---    Total Objective Function
     g1 = 1.50

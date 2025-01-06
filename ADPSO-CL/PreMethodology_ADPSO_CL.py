@@ -10,7 +10,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 #---    Initial matriz
-n = 15                                                # Population size: 10 o 15
+n = 20                                                # Population size: 20
 
 active_cells = 10440
 
@@ -22,11 +22,11 @@ for k in range(1,3):
     globals()['n_var_' + str(k)] = reduce(lambda x,y: x*y, globals()['k_shape_' + str(k)])
     n_var += globals()['n_var_' + str(k)]
 n_var = n_var       # Number of variables
-print (n_var)
+print(n_var, active_cells)
 
 #---    Create iteration register file
 with h5py.File('Pre_ADPSO-CL.h5', 'w') as f:
-    pob_x_h5py = f.create_dataset("pob_x", (n, n_var))
+    pob_x_h5py = f.create_dataset("pob_x", (n, int(n_var + active_cells)))
 
 #---    Bounds
 lb_kx, ub_kx = 0.001, 30
@@ -41,8 +41,17 @@ u_bounds = np.concatenate((np.around(np.repeat(ub_kx, active_cells),4), np.aroun
                            np.around(np.repeat(ub_1_kx, n_var_1),4), np.around(np.repeat(ub_1_sy, n_var_2),4)), axis = 0) 
 
 #---    Initial Sampling (Latyn Hypercube)
-sample_scaled = get_sampling_LH(n_var, n, l_bounds, u_bounds)
-print(sample_scaled)
+pre_sample_scaled = get_sampling_LH(n_var, n, l_bounds, u_bounds)
+pre_sample_scaled = np.around(pre_sample_scaled, 4)
+
+#--- #---   Sub generación SY/SS
+sample_scaled = np.zeros(shape=(n, int(n_var + active_cells)))
+for l in range(n):
+    p_values =  [100, 1000, 10000]
+    sy_ss_values = np.random.choice(p_values, active_cells)
+
+    sample_scaled[l] = np.concatenate((pre_sample_scaled[l], sy_ss_values), axis = 0)
+#print(sample_scaled)
 
 #---    Iteration register
 for i in range(n):
@@ -53,6 +62,6 @@ for i in range(n):
 #---    Read file to verify
 with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
     x = f["pob_x"][:]
-print(x[0])
+print(x[0].size)
 print(x[int(n-1)])
 print(len(x))

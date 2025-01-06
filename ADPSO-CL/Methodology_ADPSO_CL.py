@@ -6,10 +6,11 @@ import geopandas as gpd
 import pandas as pd
 import numpy as np
 import h5py
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import os
 from functools import reduce
 import time
+#import math
 import sys
 from request_server.request_server import send_request_py
 import warnings
@@ -21,6 +22,14 @@ FINAL_ITERATION = int(sys.argv[3])
 VM = int(sys.argv[4])
 
 #---    Paths
+#path_WEAP = r'C:\Users\aimee\Documents\WEAP Areas\Ligua_WEAP_MODFLOW'
+#path_model = os.path.join(path_WEAP, 'NWT_L_v2')
+#path_init_model = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_L_initial'
+#path_nwt_exe = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\MODFLOW-NWT_1.2.0\bin\MODFLOW-NWT_64.exe'
+#path_GIS = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\GIS'
+#path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
+#path_obs_data = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\ObservedData'
+
 path_WEAP = r'C:\Users\vagrant\Documents\WEAP Areas\Ligua_WEAP_MODFLOW'
 path_model = os.path.join(path_WEAP, 'NWT_L_v2')
 path_init_model = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_L_initial'
@@ -30,8 +39,8 @@ path_output = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\o
 path_obs_data = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\ObservedData'
 
 #---    Initial matriz
-HP = ['kx', 'sy'] 
-initial_shape_HP = gpd.read_file(path_GIS + '/SuperfitialGeology_Ligua_initial_values_v2.shp') 
+HP = ['kx', 'sy', 'sy_ss'] 
+initial_shape_HP = gpd.read_file(path_GIS + '/SG_Ligua_initial_values.shp') 
 active_matriz = initial_shape_HP['ACTIVEL1'].to_numpy().reshape((172,369))                          # Matrix of zeros and ones that allows maintaining active area
 
 active_cells = 10440
@@ -43,20 +52,24 @@ n_var = active_cells * 2
 for k in range(1,3):                                                                                # CAMBIA SEGÚN NÚMERO DE KERNELS
     globals()['n_var_' + str(k)] = reduce(lambda x,y: x*y, globals()['k_shape_' + str(k)])
     n_var += globals()['n_var_' + str(k)]
-n_var = n_var       # Number of variables
-print (n_var)
+n_var = n_var
 
 #---    Bounds
+#---    Multipliers
 lb_kx, ub_kx = 0.001, 30
 lb_sy, ub_sy = 0.015, 5
+lb_sy_ss, ub_sy_ss = 100, 10000    ## CREO QUE DEBEN SER CERO
 
+#---    Kernels
 lb_1_kx, ub_1_kx = 0.0750, 1.0000
 lb_1_sy, ub_1_sy = 0.0050, 0.0500
 
 l_bounds = np.concatenate((np.around(np.repeat(lb_kx, active_cells),4), np.around(np.repeat(lb_sy, active_cells),4), 
-                           np.around(np.repeat(lb_1_kx, n_var_1),4), np.around(np.repeat(lb_1_sy, n_var_2),4)), axis = 0)
+                           np.around(np.repeat(lb_1_kx, n_var_1),4), np.around(np.repeat(lb_1_sy, n_var_2),4),
+                           np.around(np.repeat(lb_sy_ss, active_cells),4)), axis = 0)
 u_bounds = np.concatenate((np.around(np.repeat(ub_kx, active_cells),4), np.around(np.repeat(ub_sy, active_cells),4), 
-                           np.around(np.repeat(ub_1_kx, n_var_1),4), np.around(np.repeat(ub_1_sy, n_var_2),4)), axis = 0) 
+                           np.around(np.repeat(ub_1_kx, n_var_1),4), np.around(np.repeat(ub_1_sy, n_var_2),4),
+                           np.around(np.repeat(ub_sy_ss, active_cells),4)), axis = 0) 
 
 #---    Initial Sampling (Latyn Hypercube)
 class Particle:
@@ -67,7 +80,7 @@ class Particle:
         self.x_best = np.copy(x)                 
         self.y_best = y
 
-pob = Particle(np.around(np.array([0]*(n_var)),4),np.around(np.array([0]*(n_var)),4),10000000000)
+pob = Particle(np.around(np.array([0]*(n_var + active_cells)),4),np.around(np.array([0]*(n_var + active_cells)),4),10000000000)
 
 #---    Initial Sampling - Pob(0)
 dir_file = os.path.join(path_output, 'ADPSO_CL_register_vm' + str(VM) + '.h5')
@@ -79,7 +92,7 @@ else:
         indices = np.where(y != 0)
         #print(len(indices[1]))
     ITERATION = len(indices[1])
-print(ITERATION)
+#print(ITERATION)
 
 if ITERATION == 0:
     with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
@@ -95,10 +108,10 @@ if ITERATION == 0:
     #---    Create iteration register file
     with h5py.File(dir_file, 'w') as g:
         iter_h5py = g.create_dataset("iteration", (FINAL_ITERATION, 1))
-        pob_x_h5py = g.create_dataset("pob_x", (FINAL_ITERATION, n_var))
+        pob_x_h5py = g.create_dataset("pob_x", (FINAL_ITERATION, n_var + active_cells))
         pob_y_h5py = g.create_dataset("pob_y", (FINAL_ITERATION, 1))
-        pob_v_h5py = g.create_dataset("pob_v", (FINAL_ITERATION, n_var))
-        pob_x_best_h5py = g.create_dataset("pob_x_best", (FINAL_ITERATION, n_var))
+        pob_v_h5py = g.create_dataset("pob_v", (FINAL_ITERATION, n_var + active_cells))
+        pob_x_best_h5py = g.create_dataset("pob_x_best", (FINAL_ITERATION, n_var + active_cells))
         pob_y_best_h5py = g.create_dataset("pob_y_best", (FINAL_ITERATION, 1))
         pob_w_h5py = g.create_dataset("w", (FINAL_ITERATION, 1))
 
@@ -109,7 +122,7 @@ if ITERATION == 0:
         pob_v_h5py[0] = np.copy(pob.v)
         pob_x_best_h5py[0] = np.copy(pob.x_best)
         pob_y_best_h5py[0] = pob.y_best
-        pob_w_h5py[0] = 0.5
+        pob_w_h5py[0] = 0.5                                     # inertia velocity
     g.close()
 
     ITERATION += 1
@@ -121,17 +134,21 @@ if ITERATION == 0:
     w_max = 0.9                                                 # maximum value for the inertia velocity
     vMax = np.around(np.multiply(u_bounds-l_bounds,0.4),4)      # Max velocity # De 0.8 a 0.4 # E2 con 0.4
     vMin = -vMax
+    print(vMax, vMin)
     w = 0.5                                                     # inertia velocity
 
     for it in range(ITERATION, FINAL_ITERATION):
         
         time.sleep(np.random.randint(10,20,size = 1)[0])
         gbest = send_request_py(IP_SERVER_ADD, pob.y, pob.x)           # Update global particle
+        print('gbest: ', gbest)
+        print('pob.xbest: ', pob.x_best)
 
         #---    Update particle velocity
         ϵ1,ϵ2 = np.around(np.random.uniform(),4), np.around(np.random.uniform(),4)            # [0, 1]
 
         pob.v = np.around(np.around(w*pob.v,4) + np.around(α*ϵ1*(pob.x_best - pob.x),4) + np.around(β*ϵ2*(gbest - pob.x),4),4)
+        print('pob.v antes de arreglo: ', pob.v)
 
         #---    Adjust particle velocity
         index_vMax = np.where(pob.v > vMax)
@@ -141,9 +158,12 @@ if ITERATION == 0:
             pob.v[index_vMax] = vMax[index_vMax]
         if np.array(index_vMin).size > 0:
             pob.v[index_vMin] = vMin[index_vMin]
+        print('pob.v después de arreglo: ', pob.v)
 
         #---    Update particle position
+        print('pob.x antes de suma pob.v: ', pob.x)
         pob.x += pob.v
+        print('pob.x después de suma pob.v: ', pob.x)
 
         #---    Adjust particle position
         index_pMax = np.where(pob.x > u_bounds)
@@ -153,6 +173,27 @@ if ITERATION == 0:
             pob.x[index_pMax] = u_bounds[index_pMax]
         if np.array(index_pMin).size > 0:
             pob.x[index_pMin] = l_bounds[index_pMin]
+
+        print('pob.x después de ajuste particula: ', pob.x)
+
+        #---    Adjust multiples of ten:
+        sub_index = np.where((pob.x != 100) & (pob.x != 1000) & (pob.x != 10000))
+        sub_index_array = np.array(sub_index)
+
+        arreglo = np.array([100, 1000, 10000])
+        if sub_index_array.size > 0:
+            for ind in range(int(sub_index_array.size)):
+                ind_value = sub_index_array[0,ind]
+                if ind_value < n_var:
+                    pass
+                else:
+                    if pob.x[ind_value] <= 499:
+                        pob.x[ind_value] = 100
+                    elif pob.x[ind_value] >= 500 and pob.x[ind_value] <= 4999:
+                        pob.x[ind_value] = 1000
+                    elif pob.x[ind_value] >= 5000:
+                        pob.x[ind_value] = 10000             
+        print('pob.x después de ajuste multiplos: ', pob.x)
 
         #---    Evaluate the fitnness function
         y = Run_WEAP_MODFLOW(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var, 
@@ -207,11 +248,14 @@ else:
         
         time.sleep(np.random.randint(10,20,size = 1)[0])
         gbest = send_request_py(IP_SERVER_ADD, pob.y, pob.x)           # Update global particle
+        print('gbest: ', gbest)
+        print('pob.xbest: ', pob.x_best)
 
         #---    Update particle velocity
         ϵ1,ϵ2 = np.around(np.random.uniform(),4), np.around(np.random.uniform(),4)            # [0, 1]
 
         pob.v = np.around(np.around(w*pob.v,4) + np.around(α*ϵ1*(pob.x_best - pob.x),4) + np.around(β*ϵ2*(gbest - pob.x),4),4)
+        print('pob.v antes de arreglo: ', pob.v)
 
         #---    Adjust particle velocity
         index_vMax = np.where(pob.v > vMax)
@@ -221,9 +265,12 @@ else:
             pob.v[index_vMax] = vMax[index_vMax]
         if np.array(index_vMin).size > 0:
             pob.v[index_vMin] = vMin[index_vMin]
+        print('pob.v después de arreglo: ', pob.v)    
 
         #---    Update particle position
+        print('pob.x antes de suma pob.v: ', pob.x)
         pob.x += pob.v
+        print('pob.x después de suma pob.v: ', pob.x)
 
         #---    Adjust particle position
         index_pMax = np.where(pob.x > u_bounds)
@@ -233,6 +280,26 @@ else:
             pob.x[index_pMax] = u_bounds[index_pMax]
         if np.array(index_pMin).size > 0:
             pob.x[index_pMin] = l_bounds[index_pMin]
+        print('pob.x después de ajuste particula: ', pob.x)
+
+        #---    Adjust multiples of ten:
+        sub_index = np.where((pob.x != 100) & (pob.x != 1000) & (pob.x != 10000))
+        sub_index_array = np.array(sub_index)
+
+        arreglo = np.array([100, 1000, 10000])
+        if sub_index_array.size > 0:
+            for ind in range(int(sub_index_array.size)):
+                ind_value = sub_index_array[0,ind]
+                if ind_value < n_var:
+                    pass
+                else:
+                    if pob.x[ind_value] <= 499:
+                        pob.x[ind_value] = 100
+                    elif pob.x[ind_value] >= 500 and pob.x[ind_value] <= 4999:
+                        pob.x[ind_value] = 1000
+                    elif pob.x[ind_value] >= 5000:
+                        pob.x[ind_value] = 10000             
+        print('pob.x después de ajuste multiplos: ', pob.x)
 
         #---    Evaluate the fitnness function
         y = Run_WEAP_MODFLOW(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var, 
