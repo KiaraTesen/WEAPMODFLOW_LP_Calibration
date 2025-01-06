@@ -30,13 +30,13 @@ VM = int(sys.argv[4])
 #path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
 #path_obs_data = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\ObservedData'
 
-path_WEAP = r'C:\Users\vagrant\Documents\WEAP Areas\Ligua_WEAP_MODFLOW'
+path_WEAP = r'C:\Users\Administrator\Documents\WEAP Areas\Ligua_WEAP_MODFLOW'
 path_model = os.path.join(path_WEAP, 'NWT_L_v2')
-path_init_model = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_L_initial'
-path_nwt_exe = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\MODFLOW-NWT_1.2.0\bin\MODFLOW-NWT_64.exe'
-path_GIS = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\GIS'
-path_output = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
-path_obs_data = r'C:\Users\vagrant\Documents\WEAPMODFLOW_LP_Calibration\data\ObservedData'
+path_init_model = r'C:\Users\Administrator\Documents\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_L_initial'
+path_nwt_exe = r'C:\Users\Administrator\Documents\WEAPMODFLOW_LP_Calibration\data\MODFLOW-NWT_1.2.0\bin\MODFLOW-NWT_64.exe'
+path_GIS = r'C:\Users\Administrator\Documents\WEAPMODFLOW_LP_Calibration\data\GIS'
+path_output = r'C:\Users\Administrator\Documents\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
+path_obs_data = r'C:\Users\Administrator\Documents\WEAPMODFLOW_LP_Calibration\data\ObservedData'
 
 #---    Initial matriz
 HP = ['kx', 'sy', 'sy_ss'] 
