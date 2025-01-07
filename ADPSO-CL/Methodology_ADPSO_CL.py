@@ -6,11 +6,11 @@ import geopandas as gpd
 import pandas as pd
 import numpy as np
 import h5py
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import os
 from functools import reduce
 import time
-#import math
+import math
 import sys
 from request_server.request_server import send_request_py
 import warnings
