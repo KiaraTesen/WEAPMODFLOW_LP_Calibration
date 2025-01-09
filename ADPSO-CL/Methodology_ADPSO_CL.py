@@ -80,7 +80,7 @@ class Particle:
         self.x_best = np.copy(x)                 
         self.y_best = y
 
-pob = Particle(np.around(np.array([0]*(n_var + active_cells)),4),np.around(np.array([0]*(n_var + active_cells)),4),10000000000)
+pob = Particle(np.around(np.array([0]*(n_var + active_cells)),4),np.around(np.array([0]*(n_var + active_cells)),4),100000000000000000000)
 
 #---    Initial Sampling - Pob(0)
 dir_file = os.path.join(path_output, 'ADPSO_CL_register_vm' + str(VM) + '.h5')
