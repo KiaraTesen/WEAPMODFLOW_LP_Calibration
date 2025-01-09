@@ -143,10 +143,11 @@ if ITERATION == 0:
         gbest = send_request_py(IP_SERVER_ADD, pob.y, pob.x)           # Update global particle
         print('gbest: ', gbest)
         print('pob.xbest: ', pob.x_best)
+        print('pob.x: ', pob.x)
 
         #---    Update particle velocity
         ϵ1,ϵ2 = np.around(np.random.uniform(),4), np.around(np.random.uniform(),4)            # [0, 1]
-
+        print('e1 = ', ϵ1, 'e2 = ', ϵ2)
         pob.v = np.around(np.around(w*pob.v,4) + np.around(α*ϵ1*(pob.x_best - pob.x),4) + np.around(β*ϵ2*(gbest - pob.x),4),4)
         print('pob.v antes de arreglo: ', pob.v)
 
