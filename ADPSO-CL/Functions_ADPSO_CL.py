@@ -134,8 +134,6 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
             end = n_var + active_cells
 
         globals()["matriz_pre_" + str(m)] = get_pre_HP(initial_shape_HP, pre_shape_HP, str(m), sample_scaled, begin, end)
-###        get_image_matriz(globals()["matriz_pre_" + str(m)], str(m), os.path.join(dir_iteration, 'Pre_' + str(m) +'.png'))
-###        plt.clf
 
         #---    CLs
         kernel_kx = sample_scaled[int(active_cells * 2):int(active_cells * 2 + n_var_1)].reshape(k_shape_1)
@@ -144,8 +142,6 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
         if m == "kx":
             globals()["matriz_" + str(m)] = get_HP(pre_shape_HP, str(m), active_matriz, decimals, locals()["kernel_" + str(m)])
             globals()["matriz_" + str(m)] = np.where(globals()["matriz_" + str(m)] < 0.0000000001, 0.0000000001, globals()["matriz_" + str(m)])
-###            get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
-###            plt.clf()
             globals()["vector_" + str(m)] = globals()["matriz_" + str(m)].flatten()
             new_shape_HP[m] = globals()["vector_" + str(m)]
 
@@ -153,15 +149,11 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
             globals()["matriz_" + str(m)] = get_HP(pre_shape_HP, str(m), active_matriz, decimals, locals()["kernel_" + str(m)])
             globals()["matriz_" + str(m)] = np.where(globals()["matriz_" + str(m)] < 0.01, 0.01, globals()["matriz_" + str(m)])
             globals()["matriz_" + str(m)] = np.where(globals()["matriz_" + str(m)] > 0.5, 0.5, globals()["matriz_" + str(m)])
-###            get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
-###            plt.clf()
             globals()["vector_" + str(m)] = globals()["matriz_" + str(m)].flatten()
             new_shape_HP[m] = globals()["vector_" + str(m)]
         
         elif m == "sy_ss":
             globals()["matriz_" + str(m)] = globals()["matriz_pre_" + str(m)]
-###            get_image_matriz(globals()["matriz_" + str(m)], str(m), os.path.join(dir_iteration, 'Final_' + str(m) +'.png'))
-###            plt.clf()
             globals()["vector_" + str(m)] = globals()["matriz_" + str(m)].flatten()
             new_shape_HP[m] = globals()["vector_" + str(m)]
         
@@ -224,7 +216,6 @@ def Run_WEAP_MODFLOW(path_output, iteration, initial_shape_HP, HP, active_cells,
     
     #---    Export results
     favorites = pd.read_excel(r"C:\Users\Administrator\Documents\WEAPMODFLOW_LP_Calibration\data\Favorites_WEAP.xlsx")
-##    favorites = pd.read_excel(r"C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\Favorites_WEAP.xlsx")
 
     for i,j in zip(favorites["BranchVariable"],favorites["WEAP Export"]):
         WEAP.LoadFavorite(i)

@@ -22,14 +22,6 @@ FINAL_ITERATION = int(sys.argv[3])
 VM = int(sys.argv[4])
 
 #---    Paths
-#path_WEAP = r'C:\Users\aimee\Documents\WEAP Areas\Ligua_WEAP_MODFLOW'
-#path_model = os.path.join(path_WEAP, 'NWT_L_v2')
-#path_init_model = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_L_initial'
-#path_nwt_exe = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\MODFLOW-NWT_1.2.0\bin\MODFLOW-NWT_64.exe'
-#path_GIS = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\GIS'
-#path_output = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\ADPSO-CL\output'
-#path_obs_data = r'C:\Users\aimee\Desktop\Github\WEAPMODFLOW_LP_Calibration\data\ObservedData'
-
 path_WEAP = r'C:\Users\Administrator\Documents\WEAP Areas\Ligua_WEAP_MODFLOW'
 path_model = os.path.join(path_WEAP, 'NWT_L_v2')
 path_init_model = r'C:\Users\Administrator\Documents\WEAPMODFLOW_LP_Calibration\data\MODFLOW_model\NWT_L_initial'
@@ -90,9 +82,7 @@ else:
     with h5py.File(dir_file, 'r') as g:
         y = g["pob_y"][:]
         indices = np.where(y != 0)
-        #print(len(indices[1]))
     ITERATION = len(indices[1])
-#print(ITERATION)
 
 if ITERATION == 0:
     with h5py.File('Pre_ADPSO-CL.h5', 'r') as f:
@@ -141,15 +131,11 @@ if ITERATION == 0:
         
         time.sleep(np.random.randint(10,20,size = 1)[0])
         gbest = send_request_py(IP_SERVER_ADD, pob.y, pob.x)           # Update global particle
-        print('gbest: ', gbest)
-        print('pob.xbest: ', pob.x_best)
-        print('pob.x: ', pob.x)
 
         #---    Update particle velocity
         ϵ1,ϵ2 = np.around(np.random.uniform(),4), np.around(np.random.uniform(),4)            # [0, 1]
-        print('e1 = ', ϵ1, 'e2 = ', ϵ2)
+
         pob.v = np.around(np.around(w*pob.v,4) + np.around(α*ϵ1*(pob.x_best - pob.x),4) + np.around(β*ϵ2*(gbest - pob.x),4),4)
-        print('pob.v antes de arreglo: ', pob.v)
 
         #---    Adjust particle velocity
         index_vMax = np.where(pob.v > vMax)
@@ -159,12 +145,9 @@ if ITERATION == 0:
             pob.v[index_vMax] = vMax[index_vMax]
         if np.array(index_vMin).size > 0:
             pob.v[index_vMin] = vMin[index_vMin]
-        print('pob.v después de arreglo: ', pob.v)
 
         #---    Update particle position
-        print('pob.x antes de suma pob.v: ', pob.x)
         pob.x += pob.v
-        print('pob.x después de suma pob.v: ', pob.x)
 
         #---    Adjust particle position
         index_pMax = np.where(pob.x > u_bounds)
@@ -174,8 +157,6 @@ if ITERATION == 0:
             pob.x[index_pMax] = u_bounds[index_pMax]
         if np.array(index_pMin).size > 0:
             pob.x[index_pMin] = l_bounds[index_pMin]
-
-        print('pob.x después de ajuste particula: ', pob.x)
 
         #---    Adjust multiples of ten:
         sub_index = np.where((pob.x != 100) & (pob.x != 1000) & (pob.x != 10000))
@@ -194,7 +175,6 @@ if ITERATION == 0:
                         pob.x[ind_value] = 1000
                     elif pob.x[ind_value] >= 5000:
                         pob.x[ind_value] = 10000             
-        print('pob.x después de ajuste multiplos: ', pob.x)
 
         #---    Evaluate the fitnness function
         y = Run_WEAP_MODFLOW(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var, 
@@ -249,14 +229,11 @@ else:
         
         time.sleep(np.random.randint(10,20,size = 1)[0])
         gbest = send_request_py(IP_SERVER_ADD, pob.y, pob.x)           # Update global particle
-        print('gbest: ', gbest)
-        print('pob.xbest: ', pob.x_best)
 
         #---    Update particle velocity
         ϵ1,ϵ2 = np.around(np.random.uniform(),4), np.around(np.random.uniform(),4)            # [0, 1]
 
         pob.v = np.around(np.around(w*pob.v,4) + np.around(α*ϵ1*(pob.x_best - pob.x),4) + np.around(β*ϵ2*(gbest - pob.x),4),4)
-        print('pob.v antes de arreglo: ', pob.v)
 
         #---    Adjust particle velocity
         index_vMax = np.where(pob.v > vMax)
@@ -266,12 +243,9 @@ else:
             pob.v[index_vMax] = vMax[index_vMax]
         if np.array(index_vMin).size > 0:
             pob.v[index_vMin] = vMin[index_vMin]
-        print('pob.v después de arreglo: ', pob.v)    
 
         #---    Update particle position
-        print('pob.x antes de suma pob.v: ', pob.x)
         pob.x += pob.v
-        print('pob.x después de suma pob.v: ', pob.x)
 
         #---    Adjust particle position
         index_pMax = np.where(pob.x > u_bounds)
@@ -281,7 +255,6 @@ else:
             pob.x[index_pMax] = u_bounds[index_pMax]
         if np.array(index_pMin).size > 0:
             pob.x[index_pMin] = l_bounds[index_pMin]
-        print('pob.x después de ajuste particula: ', pob.x)
 
         #---    Adjust multiples of ten:
         sub_index = np.where((pob.x != 100) & (pob.x != 1000) & (pob.x != 10000))
@@ -300,7 +273,6 @@ else:
                         pob.x[ind_value] = 1000
                     elif pob.x[ind_value] >= 5000:
                         pob.x[ind_value] = 10000             
-        print('pob.x después de ajuste multiplos: ', pob.x)
 
         #---    Evaluate the fitnness function
         y = Run_WEAP_MODFLOW(path_output, str(ITERATION), initial_shape_HP, HP, active_cells, pob.x, n_var_1, n_var_2, n_var, 
